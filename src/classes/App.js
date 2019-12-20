@@ -4,6 +4,7 @@ import {
     displayScore
 } from "./NutriScore";
 import Scraper from "./Scraper";
+import { settings } from "../config";
 
 
 class BetterFoodChoice {
@@ -27,7 +28,7 @@ class BetterFoodChoice {
 
         try {
             // delete ads
-            //this.store.clean();
+            this.store.clean();
 
             // action based on page
             const pageType = this.store.getPageType();
@@ -40,7 +41,8 @@ class BetterFoodChoice {
                     const GTIN = this.store.getGTIN();
 
                     // load product
-                    await this.store.loadProductData(GTIN);
+                    if(!settings.disableApi)
+                        await this.store.loadProductData(GTIN);
 
                     // display score or from api or calculated locally
                     const nutri_score_final = this.store.product.nutri_score_final ||
@@ -69,17 +71,24 @@ class BetterFoodChoice {
 
                     // urls already scraped
                     let urls = [];
+                    let currentUrl = window.location.pathname // detect change page to clear urls array
 
                     // iterate product tiles
-                    const observer = new MutationObserver(async () => {
+                    const iterateProducts = async () => {
                         
                         // get all urls from product list
                         let allUrls = this.store.getUrlsFromOverview();
 
+                        // check if page change
+                        if(currentUrl !== window.location.pathname){
+                            urls = [];
+                            currentUrl = window.location.pathname;
+                        }
+
                         // if list not changed return
                         if(allUrls.length === urls.length)
                             return
-
+                        
                         // filter urls to be scraped
                         let toScrape = allUrls.filter(u => urls.indexOf(u) < 0);
 
@@ -105,13 +114,21 @@ class BetterFoodChoice {
 
                         // convert prices
                         this.store.changePriceList()
-                    })
+                    }
 
                     // configure observer
-                    observer.observe(this.store.overviewTarget, {
+                    const observer = new MutationObserver(iterateProducts)
+                    observer.observe(document.body, {
                         subtree: true,
                         childList: true
-                    })
+                    });
+
+                    //page change 
+                    window.onhashchange = () => {
+                        urls = [];
+                        iterateProducts()
+                    }
+
 
                     break;
             }

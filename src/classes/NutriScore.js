@@ -41,8 +41,7 @@ const getScoreLocal = (productCategory, {
     fruitvegetables,
     sodium,
     acids,
-    sugar,
-    natrium
+    sugar
 }) => {
 
     // Code for calculation of NutriScore based
@@ -96,7 +95,7 @@ const getScoreLocal = (productCategory, {
         scores.sodium = 0;
 
         // false values to skip classes as in the original file 
-        scores.fruitvegetables = fromClassRange(fruitvegetables, [40, false, 60, false, 80]);
+        scores.fruitvegetables = fromClassRange(fruitvegetables.toNumber(), [40, false, 60, false, 80]);
 
         scores.fibers = 0;
 

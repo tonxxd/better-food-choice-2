@@ -2,7 +2,8 @@
 import $ from 'jquery';
 import Generic from './Generic';
 import {
-    unit
+    unit,
+    multiply
 } from 'mathjs'
 import { convertPrice } from '../CurrencyConverter';
 
@@ -18,7 +19,7 @@ class Migros extends Generic {
 
     /**
      * Creates an instance of Migros.
-     * Override default pagetypes classes to be detected and product list ovrview selector
+     * Override default pagetypes classes to be detected 
      * @memberof Migros
      */
     constructor(){
@@ -29,7 +30,6 @@ class Migros extends Generic {
             UNKNOWN: 'migros.unknown'
         }
 
-        this.overviewTarget = $(".mui-lazy-load-product").first()[0]
     }
 
     /**
@@ -40,7 +40,7 @@ class Migros extends Generic {
      * @memberof Migros
      */
     listItemTargetFromHref(u) {
-        return $(".mui-product-tile").filter(function(){
+        return $("body").find(".mui-product-tile").filter(function(){
             return $(this).attr("href") == u;
         }).first().find('.mui-js-rating').html("")
     }
@@ -215,7 +215,14 @@ class Migros extends Generic {
     getFoodValues(customBody = false){
         const getValue = (key) => {
             // select key next element 
-            const txt = $(customBody || "body").find('#nutrient-table td').filter(function() { return $(this).text().trim().toLowerCase().indexOf(key.toLowerCase()) >= 0}).first().next().text().trim()
+            const txt = $(customBody || "body")
+                            .find('td')
+                            .filter(function() {  // take right td
+                                return $(this).text().trim().toLowerCase().indexOf(key.toLowerCase()) >= 0
+                            })
+                            .first()
+                            .next() // take next td
+                            .text().trim().replace('%','g') // trim and change % to g since math do not recognize %
         
             // default value with unit
             if (!txt || txt.length === 0 || txt.indexOf('<') >= 0)
@@ -232,12 +239,17 @@ class Migros extends Generic {
         const sugar = getValue('davon Zucker');
         const fibers = getValue('Ballaststoffe');
         const protein = getValue('Eiweiss');
-        const sodium = getValue('Salz');
-        const natrium = getValue('Natrium');
+        const fruitvegetables = getValue('Fruchtgehalt');
+        
+        // convert salt to sodium 
+        const sodium = multiply(getValue('Salz'),.4).toNumber('g') > getValue('Natrium').toNumber('g') ? multiply(getValue('Salz'),.4) : getValue('Natrium');
 
         // TO ASK WHY FRUIT 0
+        console.log({
+            energy,acids,sugar,fibers,protein,sodium, fruitvegetables
+        })
         return {
-            energy,acids,sugar,fibers,protein,sodium,natrium, fruitvegetables: unit(0,'g')
+            energy,acids,sugar,fibers,protein,sodium, fruitvegetables
         }
     }
 
@@ -269,38 +281,21 @@ class Migros extends Generic {
 
         // Category Overview Page
         $(`
-            .widget-ratings.clearfix,
-            .clearfix.mui-list-unstyled,
-            .mui-panel.panel-border-top,
-            .section-bottom-md-padding,
-            .section-bottom-padding,
-            .container.section-bottom-padding,
-            .mui-share-buttons.mui-js-share-buttons.share-buttons,
-            .community-tabs-container,
-            .mui-js-community-reviews.js-community-loaded,
-            .section-bottom-padding.bg-light.js-related-products,
-            .section-bottom-padding.bg-white.related-container.container,
-            .mui-button.mui-message-list-load-all.mui-js-message-list-load-all-trigger.mui-js-load-all-reviews,
-            .section-bottom-padding.last-seen-products.js-last-seen-products,
-            .mui-rating.is-small,
-            .mui-js-rating.mui-product-tile-rating.mui-js-rating-loaded,
-            .mui-ratings-rating-star.star-on-png,
-            .mui-product-tile-discount-image-container,
-            .mui-product-tile-footer,
-            .retailer-tab.retailer-tab-melectronics,
-            .retailer-tab.retailer-tab-sportxx,
-            .retailer-tab.retailer-tab-micasa,
-            .retailer-tab.retailer-tab-doitgarden,
-            .retailer-tab.retailer-tab-interio,
-            .retailer-tabs.tab-navigation,
-            .listing-switcher-link,
-            .sidebar-teaser,
-            .listing-switcher,
-            .sidebar-discount-badge,
-            section-bottom-padding,
-            .row.mui-footer-list-container,
-            .row.mui-footer-link-area,
-            .mui-list-unstyled.retailer-tabs.clearfix.retailer-tabs-6
+            .js-banner-1,
+            .js-banner-2,
+            .bg-wooden,
+            .mui-share-buttons,
+            .mui-footer-list-container,
+            .mui-footer-link-area,
+            .retailer-tabs,
+            .mui-teaser-picture-desktop,
+            .js-no-preferred-store,
+            .mui-favorite-button ,
+            .community-tabs-pane,
+            .bg-wooden,
+            .mui-share-buttons,
+            .mui-footer-list-container,
+            .mui-footer-link-area
         `).remove()
     }
 }
