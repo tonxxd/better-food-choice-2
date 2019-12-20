@@ -29,7 +29,7 @@ class Generic {
 
             if(!response.data.products){
                 //TODO 
-                console.log("The product is not availabe in the database.");      
+                throw "invalid";      
             }else{
                 this.product = response.data.products[0]
             }

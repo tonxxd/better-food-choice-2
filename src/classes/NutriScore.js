@@ -81,12 +81,10 @@ export const getScoreLocal = (productCategory, {
     }
 
     const badIngredientScore = scores.energy + scores.acids + scores.sodium + scores.sugar
-    console.log("Bad ingredients score: " + badIngredientScore);
 
 
     // Calculating Nutriscore.
     const goodIngredientScore = scores.fruitvegetables + scores.fibers + scores.protein;
-    console.log("Good ingredients score: " + goodIngredientScore);
 
     let nutriScoreNumber, nutriScore;
 
@@ -126,14 +124,13 @@ export const getScoreLocal = (productCategory, {
         }
     }
 
-    console.log("THE NUTRI-SCORE OF THE PRODUCT IS: " + nutriScore);
 
     return nutriScore;
 
 }
 
 
-export const displayScore = (score, group, parent) => {
+export const displayScore = (score, group, parent, size='big') => {
 
     const images = {
         A: chrome.runtime.getURL("nsA.png"),
@@ -148,14 +145,12 @@ export const displayScore = (score, group, parent) => {
     if(group === 'B' && ['C','D','E'].indexOf(score) >= 0)
         return;
 
-    console.log(images[score])
 
     // else render badge
     const img = $('<img />')
         .attr("src", images[score])
         .css({
-            height: 87.5,
-            width: 164,
+            height: size === 'big' ? 90 : 40,
             zIndex: 10,
             display: 'block'
         })

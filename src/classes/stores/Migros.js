@@ -6,6 +6,7 @@ import { API } from '../../config';
 import {
     unit
 } from 'mathjs'
+import { convertPrice } from '../CurrencyConverter';
 
 
 class Migros extends Generic {
@@ -18,13 +19,21 @@ class Migros extends Generic {
             PRODUCTOVERVIEWPAGE: 'migros.productoverview',
             UNKNOWN: 'migros.unknown'
         }
+
+        this.overviewTarget = $(".mui-lazy-load-product").first()[0]
+    }
+
+    listItemTargetFromHref(u) {
+        return $(".mui-product-tile").filter(function(){
+            return $(this).attr("href") == u;
+        }).first().find('.mui-js-rating').html("")
     }
     
 
     getPageType(){
-        if($('.sidebar-product-name').length ===1)
+        if($('.sidebar-product-name').length > 0)
             return this.pageTypes.SINGLEPRODUCTPAGE;
-        if($('.mui-js-product-list').length ===1)
+        if($('.mui-lazy-load-product').length > 0)
             return this.pageTypes.PRODUCTOVERVIEWPAGE;
 
         return this.pageTypes.UNKNOWN;
@@ -41,9 +50,9 @@ class Migros extends Generic {
     }
 
     // CATEGORY
-    getCategoryString(){
+    getCategoryString(customBody = false){
         if(!this.product.categoryString){
-         this.product.categoryString = $('.mui-breadcrumb li').map(function(){
+         this.product.categoryString = $(customBody || 'body').find('.mui-breadcrumb li').map(function(){
             return $.trim($(this).text());
          }).get().reduce((a,b)=> {
              return a+' '+b;
@@ -53,8 +62,8 @@ class Migros extends Generic {
     }
     
 
-    getProductCategory(){
-        const cat = this.getCategoryString()
+    getProductCategory(customBody = false){
+        const cat = this.getCategoryString(customBody)
         if(cat.indexOf('getränke heiss & kalt') <0) 
             this.product.category = 'food';
         if(cat.indexOf('mineralwasser')>=0)
@@ -67,11 +76,78 @@ class Migros extends Generic {
         return this.product.category || 'unknown';
     }
 
+    getUrlsFromOverview(){
+        let urls = [];
+        $('.mui-product-tile').each(function(){
+            urls.push($(this).attr("href"))
+        })
+        return urls
+    }
 
-    getFoodValues(){
+    changePriceList(){
+        const $this = this;
+        $('.mui-lazy-load-product:first').find(".mui-product-tile:not(.updatedBetterFoodChoice)").each(function(){
+            $this.changePrice(
+                $(this).find(".mui-product-tile-price"),
+                $(this).find('.mui-product-tile-original-price'),
+                $(this).find('.mui-product-tile-discount-image-container')
+            )
+            $(this).addClass('updatedBetterFoodChoice')
+        })
+    }
+
+
+    changePrice(customPriceEl = false, customUsualPriceEl = false, customDiscountContainer = false){
+
+        const userCountry = localStorage.getItem("CountryName");
+
+        const currentPriceEl = customPriceEl || $('.current-price');
+        const usualPriceEl = customUsualPriceEl || $('.usual-price');
+        const discountContainer = customDiscountContainer || $('.sidebar-discount-badge');
+
+        let currentPrice_chf = currentPriceEl.text().replace('-','').trim();
+        currentPrice_chf = parseFloat(currentPrice_chf);
+        currentPrice_chf = ((currentPrice_chf*10).toFixed(0)/10).toFixed(2);
+
+        const currentPrice_eur = convertPrice(currentPrice_chf)
+
+        if(userCountry === 'Germany')
+            currentPriceEl.text('€ '+currentPrice_eur)
+
+        const usualPrice_chf = usualPriceEl.text().replace('statt','').trim();
+
+        // discount
+        if(usualPrice_chf && usualPrice_chf.length > 0){
+            const usualPrice_eur = convertPrice(usualPrice_chf);
+            const percent = ((1-currentPrice_chf/usualPrice_chf)*100).toFixed(0);
+
+            if(userCountry == 'Germany')
+                usualPriceEl.text('statt '+usualPrice_eur)
+
+            // badge
+            discountContainer.html(
+                $("<div>").css({
+                    background:'linear-gradient(130deg, #ffb696,#ff4d00, #ff4d00, #ffb696)',
+                    fontSize: '35px',
+                    color: 'white',
+                    display: 'inline-block',
+                    fontFamily: "Helvetica Neue Condensed,Impact,arial,sans-serif",
+                    fontWeight: 'bold',
+                    lineHeight: 1,
+                    margin:'30px 0 10px 0',
+                    padding: "5px 10px 5px 10px",
+                    boxShadow: "5px 5px 5px darkgrey",
+                    transform: "rotate(-5deg)"
+                }).text(percent+'%')
+            )
+        }
+    }
+
+
+    getFoodValues(customBody = false){
         const getValue = (key) => {
             // select key next element 
-            const txt = $('#nutrient-table td').filter(function() { return $(this).text().trim().toLowerCase().indexOf(key.toLowerCase()) >= 0}).first().next().text().trim()
+            const txt = $(customBody || "body").find('#nutrient-table td').filter(function() { return $(this).text().trim().toLowerCase().indexOf(key.toLowerCase()) >= 0}).first().next().text().trim()
         
             if (!txt || txt.length === 0 || txt.indexOf('<') >= 0)
                 return unit(0,'g')

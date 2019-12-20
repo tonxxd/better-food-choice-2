@@ -6,4 +6,9 @@ export const API = {
     password: 'yJFbbHtCPTFyy8GB',
 
     endpoint: gtin => `https://eatfit-service.foodcoa.ch/products/${gtin}/?resultType=array`,
+
+}
+
+export const settings = {
+    overviewBatchSize: 3
 }
