@@ -1,8 +1,12 @@
 
-import $ from 'jquery';
 import Axios from 'axios';
 import { API } from '../../config';
 
+/**
+ * Generic class fro stores to be extended
+ *
+ * @class Generic
+ */
 class Generic {
 
     constructor(){
@@ -18,6 +22,13 @@ class Generic {
         }
     }
 
+    /**
+     * call api for data
+     *
+     * @param {*} GTIN
+     * @returns
+     * @memberof Generic
+     */
     async loadProductData(GTIN){
         try{
             let response = await Axios.get(API.endpoint(GTIN), {
@@ -40,10 +51,6 @@ class Generic {
 
     }
 
-
-    getName(){
-        return 'Generic'
-    }
 
     getPageType(){
         return window.location.pathname;

@@ -1,6 +1,14 @@
 import $ from 'jquery'
 
 
+/**
+ * Utility function to convert array of ranges into class 
+ *
+ * @param {*} value
+ * @param {*} intervals
+ * @param {*} defaultClass
+ * @returns
+ */
 const fromClassRange = (value, intervals, defaultClass) => {
     for (let i = 0; i < intervals.length - 1; i++)
         if (intervals[i] && value <= intervals[i])
@@ -10,7 +18,23 @@ const fromClassRange = (value, intervals, defaultClass) => {
     return defaultClass || 10
 }
 
-export const getScoreLocal = (productCategory, {
+export /**
+ * Calculate score
+ *
+ * @param {*} productCategory
+ * @param {*} {
+ *     energy,
+ *     fibers,
+ *     protein,
+ *     fruitvegetables,
+ *     sodium,
+ *     acids,
+ *     sugar,
+ *     natrium
+ * }
+ * @returns
+ */
+const getScoreLocal = (productCategory, {
     energy,
     fibers,
     protein,
@@ -130,7 +154,16 @@ export const getScoreLocal = (productCategory, {
 }
 
 
-export const displayScore = (score, group, parent, size='big') => {
+export /**
+ * display score 
+ * 
+ * @param {*} score
+ * @param {*} group
+ * @param {*} parent
+ * @param {string} [size='big','small']
+ * @returns
+ */
+const displayScore = (score, group, parent, size='big') => {
 
     const images = {
         A: chrome.runtime.getURL("nsA.png"),

@@ -1,17 +1,26 @@
 
 import $ from 'jquery';
 import Generic from './Generic';
-import Axios from 'axios';
-import { API } from '../../config';
 import {
     unit
 } from 'mathjs'
 import { convertPrice } from '../CurrencyConverter';
 
 
+/**
+ *
+ *
+ * @class Migros 
+ * @extends {Generic}
+ */
 class Migros extends Generic {
 
 
+    /**
+     * Creates an instance of Migros.
+     * Override default pagetypes classes to be detected and product list ovrview selector
+     * @memberof Migros
+     */
     constructor(){
         super()
         this.pageTypes = {
@@ -23,6 +32,13 @@ class Migros extends Generic {
         this.overviewTarget = $(".mui-lazy-load-product").first()[0]
     }
 
+    /**
+     *
+     *
+     * @param {*} u    url to filter list items
+     * @returns parent for badge in the list item
+     * @memberof Migros
+     */
     listItemTargetFromHref(u) {
         return $(".mui-product-tile").filter(function(){
             return $(this).attr("href") == u;
@@ -30,6 +46,12 @@ class Migros extends Generic {
     }
     
 
+    /**
+     * Page type from classes in DOM
+     *
+     * @returns one of this.pageTypes
+     * @memberof Migros
+     */
     getPageType(){
         if($('.sidebar-product-name').length > 0)
             return this.pageTypes.SINGLEPRODUCTPAGE;
@@ -41,7 +63,12 @@ class Migros extends Generic {
 
 
 
-    // GTIN
+    /**
+     * Retrieve GTIN from page
+     *
+     * @returns GTIN
+     * @memberof Migros
+     */
     getGTIN(){
         // get gtin from more info panel
         return parseInt($('.table-additional-information td').filter(function(i){
@@ -49,7 +76,13 @@ class Migros extends Generic {
         }).first().text().split(",")[0])
     }
 
-    // CATEGORY
+    /**
+     * Parse DOM for category string
+     *
+     * @param {boolean} [customBody=false]
+     * @returns category string
+     * @memberof Migros
+     */
     getCategoryString(customBody = false){
         if(!this.product.categoryString){
          this.product.categoryString = $(customBody || 'body').find('.mui-breadcrumb li').map(function(){
@@ -62,6 +95,13 @@ class Migros extends Generic {
     }
     
 
+    /**
+     * retrieve category from category string
+     *
+     * @param {boolean} [customBody=false]
+     * @returns category
+     * @memberof Migros
+     */
     getProductCategory(customBody = false){
         const cat = this.getCategoryString(customBody)
         if(cat.indexOf('getränke heiss & kalt') <0) 
@@ -76,6 +116,12 @@ class Migros extends Generic {
         return this.product.category || 'unknown';
     }
 
+    /**
+     * select all urls from list overview
+     *
+     * @returns array of urls
+     * @memberof Migros
+     */
     getUrlsFromOverview(){
         let urls = [];
         $('.mui-product-tile').each(function(){
@@ -84,6 +130,11 @@ class Migros extends Generic {
         return urls
     }
 
+    /**
+     * Wrapper function to iteratively convert prices in list
+     *
+     * @memberof Migros
+     */
     changePriceList(){
         const $this = this;
         $('.mui-lazy-load-product:first').find(".mui-product-tile:not(.updatedBetterFoodChoice)").each(function(){
@@ -97,6 +148,16 @@ class Migros extends Generic {
     }
 
 
+    /**
+     * Convert price of a product based on region
+     * Take as parameters custom selectors so it works
+     * both for list overview and single page
+     *
+     * @param {boolean} [customPriceEl=false]
+     * @param {boolean} [customUsualPriceEl=false]
+     * @param {boolean} [customDiscountContainer=false]
+     * @memberof Migros
+     */
     changePrice(customPriceEl = false, customUsualPriceEl = false, customDiscountContainer = false){
 
         const userCountry = localStorage.getItem("CountryName");
@@ -144,11 +205,19 @@ class Migros extends Generic {
     }
 
 
+    /**
+     * Get values to calculate score from customBody (for product list) or from page
+     *
+     * @param {boolean} [customBody=false]
+     * @returns object of values
+     * @memberof Migros
+     */
     getFoodValues(customBody = false){
         const getValue = (key) => {
             // select key next element 
             const txt = $(customBody || "body").find('#nutrient-table td').filter(function() { return $(this).text().trim().toLowerCase().indexOf(key.toLowerCase()) >= 0}).first().next().text().trim()
         
+            // default value with unit
             if (!txt || txt.length === 0 || txt.indexOf('<') >= 0)
                 return unit(0,'g')
         
@@ -157,7 +226,7 @@ class Migros extends Generic {
             return unit(txt.split(' ')[0] + ' ' + txt.split(' ')[1])
         }
 
-        // energy
+        // values
         const energy = getValue('Energie');
         const acids = getValue('davon gesättigte Fettsäuren');
         const sugar = getValue('davon Zucker');
@@ -172,12 +241,22 @@ class Migros extends Generic {
         }
     }
 
+    /**
+     * get badge parent for single page product
+     *
+     * @returns
+     * @memberof Migros
+     */
     getBadgeParent(){
         return $('#info').first()
     }
 
 
-    // clean website for the study
+    /**
+     * Clean page for study from ads etc
+     *
+     * @memberof Migros
+     */
     clean(){
         // Single Product Page
         // Remove Availability Information
