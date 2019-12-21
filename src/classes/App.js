@@ -45,12 +45,16 @@ class BetterFoodChoice {
                         await this.store.loadProductData(GTIN);
 
                     // display score or from api or calculated locally
-                    const nutri_score_final = this.store.product.nutri_score_final ||
-                        getScoreLocal(
-                            this.store.getProductCategory(),
-                            this.store.getFoodValues()
-                        );
+                    const remoteNutriScore = this.store.products[GTIN].nutri_score_final;
+                    const localNutriScore = getScoreLocal(
+                        this.store.getProductCategory(),
+                        this.store.getFoodValues()
+                    );
 
+                    if(remoteNutriScore != localNutriScore)
+                        alert(`Different ${remoteNutriScore} ${localNutriScore}`)
+                    const nutri_score_final = remoteNutriScore || localNutriScore
+                        
                     // display score
                     displayScore(
                         nutri_score_final,
@@ -75,15 +79,14 @@ class BetterFoodChoice {
 
                     // iterate product tiles
                     const iterateProducts = async () => {
+
                         
                         // get all urls from product list
                         let allUrls = this.store.getUrlsFromOverview();
 
-                        // check if page change
-                        if(currentUrl !== window.location.pathname){
-                            urls = [];
-                            currentUrl = window.location.pathname;
-                        }
+                        if(allUrls[0]!=urls[0])
+                            urls = []
+
 
                         // if list not changed return
                         if(allUrls.length === urls.length)
@@ -107,10 +110,11 @@ class BetterFoodChoice {
                                     'small'
                                     )
                             })
+                            // update scraper urls
+                            urls = [...urls, ...urlsSlice];
                         });
                         
-                        // update scraper urls
-                        urls = [...urls, ...toScrape];
+                        
 
                         // convert prices
                         this.store.changePriceList()
@@ -123,11 +127,14 @@ class BetterFoodChoice {
                         childList: true
                     });
 
-                    //page change 
-                    window.onhashchange = () => {
-                        urls = [];
-                        iterateProducts()
-                    }
+                    // //page change 
+                    // window.onhashchange = () => {
+                    //     urls = [];
+                    //     setTimeout(()=> {
+                    //         iterateProducts()
+                    //     },1000)
+                        
+                    // }
 
 
                     break;

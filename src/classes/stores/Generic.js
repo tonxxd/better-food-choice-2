@@ -11,9 +11,7 @@ class Generic {
 
     constructor(){
 
-        this.product = {
-
-        }
+        this.products = {}
 
         this.pageTypes = {
             SINGLEPRODUCTPAGE: 'generic.singleproduct',
@@ -42,9 +40,9 @@ class Generic {
                 //TODO 
                 throw "invalid";      
             }else{
-                this.product = response.data.products[0]
+                this.products[GTIN] = response.data.products[0]
             }
-            return this.product
+            return this.products[GTIN]
         }catch(e){
             console.log("The product is not availabe in the database.");      
         }

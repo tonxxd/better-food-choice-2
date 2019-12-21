@@ -1,11 +1,12 @@
-
 import $ from 'jquery';
 import Generic from './Generic';
 import {
     unit,
     multiply
 } from 'mathjs'
-import { convertPrice } from '../CurrencyConverter';
+import {
+    convertPrice
+} from '../CurrencyConverter';
 
 
 /**
@@ -22,7 +23,7 @@ class Migros extends Generic {
      * Override default pagetypes classes to be detected 
      * @memberof Migros
      */
-    constructor(){
+    constructor() {
         super()
         this.pageTypes = {
             SINGLEPRODUCTPAGE: 'migros.singleproduct',
@@ -40,11 +41,11 @@ class Migros extends Generic {
      * @memberof Migros
      */
     listItemTargetFromHref(u) {
-        return $("body").find(".mui-product-tile").filter(function(){
+        return $("body").find(".mui-product-tile").filter(function () {
             return $(this).attr("href") == u;
         }).first().find('.mui-js-rating').html("")
     }
-    
+
 
     /**
      * Page type from classes in DOM
@@ -52,10 +53,10 @@ class Migros extends Generic {
      * @returns one of this.pageTypes
      * @memberof Migros
      */
-    getPageType(){
-        if($('.sidebar-product-name').length > 0)
+    getPageType() {
+        if ($('.sidebar-product-name').length > 0)
             return this.pageTypes.SINGLEPRODUCTPAGE;
-        if($('.mui-lazy-load-product').length > 0)
+        if ($('.mui-lazy-load-product').length > 0)
             return this.pageTypes.PRODUCTOVERVIEWPAGE;
 
         return this.pageTypes.UNKNOWN;
@@ -69,11 +70,16 @@ class Migros extends Generic {
      * @returns GTIN
      * @memberof Migros
      */
-    getGTIN(){
+    getGTIN(customBody = false) {
         // get gtin from more info panel
-        return parseInt($('.table-additional-information td').filter(function(i){
+        const GTIN = parseInt($(customBody || 'body').find('.table-additional-information td').filter(function (i) {
             return $(this).prev().text() === 'GTIN'
         }).first().text().split(",")[0])
+
+        if(!this.products[GTIN])
+            this.products[GTIN] = {};
+
+        return GTIN
     }
 
     /**
@@ -83,17 +89,19 @@ class Migros extends Generic {
      * @returns category string
      * @memberof Migros
      */
-    getCategoryString(customBody = false){
-        if(!this.product.categoryString){
-         this.product.categoryString = $(customBody || 'body').find('.mui-breadcrumb li').map(function(){
-            return $.trim($(this).text());
-         }).get().reduce((a,b)=> {
-             return a+' '+b;
-         }).toLowerCase()
+    getCategoryString(customBody = false) {
+        // GTIN
+        const GTIN = this.getGTIN(customBody);
+        if (!this.products[GTIN].categoryString) {
+            this.products[GTIN].categoryString = $(customBody || 'body').find('.mui-breadcrumb li').map(function () {
+                return $.trim($(this).text());
+            }).get().reduce((a, b) => {
+                return a + ' ' + b;
+            }).toLowerCase()
         }
-        return this.product.categoryString
+        return this.products[GTIN].categoryString
     }
-    
+
 
     /**
      * retrieve category from category string
@@ -102,18 +110,23 @@ class Migros extends Generic {
      * @returns category
      * @memberof Migros
      */
-    getProductCategory(customBody = false){
-        const cat = this.getCategoryString(customBody)
-        if(cat.indexOf('getränke heiss & kalt') <0) 
-            this.product.category = 'food';
-        if(cat.indexOf('mineralwasser')>=0)
-            this.product.category = 'water';
-        if(cat.indexOf('joghurt & joghurtdrinks') >=0)
-            this.product.category = 'joghurt';
-        if(cat.indexOf('käse') >=0)
-            this.product.category = 'cheese';
-        
-        return this.product.category || 'unknown';
+    getProductCategory(customBody = false) {
+        const GTIN = this.getGTIN(customBody);
+        const cat = this.getCategoryString(customBody);
+
+
+        if (cat.indexOf('mineralwasser') >= 0)
+            this.products[GTIN].category = 'water';
+        else if (cat.indexOf('getränke heiss & kalt') >= 0)
+            this.products[GTIN].category = 'drink';
+        else if (cat.indexOf('joghurt & joghurtdrinks') >= 0)
+            this.products[GTIN].category = 'joghurt';
+        else if (cat.indexOf('käse') >= 0)
+            this.products[GTIN].category = 'cheese';
+        else if (cat.indexOf('lebensmittel') >= 0)
+            this.products[GTIN].category = 'food'
+
+        return this.products[GTIN].category || 'unknown';
     }
 
     /**
@@ -122,9 +135,9 @@ class Migros extends Generic {
      * @returns array of urls
      * @memberof Migros
      */
-    getUrlsFromOverview(){
+    getUrlsFromOverview() {
         let urls = [];
-        $('.mui-product-tile').each(function(){
+        $('.mui-product-tile').each(function () {
             urls.push($(this).attr("href"))
         })
         return urls
@@ -135,9 +148,9 @@ class Migros extends Generic {
      *
      * @memberof Migros
      */
-    changePriceList(){
+    changePriceList() {
         const $this = this;
-        $('.mui-lazy-load-product:first').find(".mui-product-tile:not(.updatedBetterFoodChoice)").each(function(){
+        $('.mui-lazy-load-product:first').find(".mui-product-tile:not(.updatedBetterFoodChoice)").each(function () {
             $this.changePrice(
                 $(this).find(".mui-product-tile-price"),
                 $(this).find('.mui-product-tile-original-price'),
@@ -158,7 +171,7 @@ class Migros extends Generic {
      * @param {boolean} [customDiscountContainer=false]
      * @memberof Migros
      */
-    changePrice(customPriceEl = false, customUsualPriceEl = false, customDiscountContainer = false){
+    changePrice(customPriceEl = false, customUsualPriceEl = false, customDiscountContainer = false) {
 
         const userCountry = localStorage.getItem("CountryName");
 
@@ -166,40 +179,41 @@ class Migros extends Generic {
         const usualPriceEl = customUsualPriceEl || $('.usual-price');
         const discountContainer = customDiscountContainer || $('.sidebar-discount-badge');
 
-        let currentPrice_chf = currentPriceEl.text().replace('-','').trim();
+        let currentPrice_chf = currentPriceEl.text().replace('.-', '').replace('-', '').trim();
         currentPrice_chf = parseFloat(currentPrice_chf);
-        currentPrice_chf = ((currentPrice_chf*10).toFixed(0)/10).toFixed(2);
+        currentPrice_chf = ((currentPrice_chf * 10).toFixed(0) / 10).toFixed(2);
 
         const currentPrice_eur = convertPrice(currentPrice_chf)
 
-        if(userCountry === 'Germany')
-            currentPriceEl.text('€ '+currentPrice_eur)
+        if (userCountry === 'Germany')
+            currentPriceEl.text('€ ' + currentPrice_eur)
 
-        const usualPrice_chf = usualPriceEl.text().replace('statt','').trim();
+        let usualPrice_chf = usualPriceEl.text().replace('.-', '').replace('-', '').replace('statt', '').trim();
+        usualPrice_chf = parseFloat(usualPrice_chf)
 
         // discount
-        if(usualPrice_chf && usualPrice_chf.length > 0){
+        if (usualPrice_chf) {
             const usualPrice_eur = convertPrice(usualPrice_chf);
-            const percent = ((1-currentPrice_chf/usualPrice_chf)*100).toFixed(0);
+            const percent = ((1 - currentPrice_chf / usualPrice_chf) * 100).toFixed(0);
 
-            if(userCountry == 'Germany')
-                usualPriceEl.text('statt '+usualPrice_eur)
+            if (userCountry == 'Germany')
+                usualPriceEl.text('statt ' + usualPrice_eur)
 
             // badge
             discountContainer.html(
                 $("<div>").css({
-                    background:'linear-gradient(130deg, #ffb696,#ff4d00, #ff4d00, #ffb696)',
+                    background: 'linear-gradient(130deg, #ffb696,#ff4d00, #ff4d00, #ffb696)',
                     fontSize: '35px',
                     color: 'white',
                     display: 'inline-block',
                     fontFamily: "Helvetica Neue Condensed,Impact,arial,sans-serif",
                     fontWeight: 'bold',
                     lineHeight: 1,
-                    margin:'30px 0 10px 0',
+                    margin: '30px 0 10px 0',
                     padding: "5px 10px 5px 10px",
                     boxShadow: "5px 5px 5px darkgrey",
                     transform: "rotate(-5deg)"
-                }).text(percent+'%')
+                }).text(percent + '%')
             )
         }
     }
@@ -212,22 +226,22 @@ class Migros extends Generic {
      * @returns object of values
      * @memberof Migros
      */
-    getFoodValues(customBody = false){
+    getFoodValues(customBody = false) {
         const getValue = (key) => {
             // select key next element 
             const txt = $(customBody || "body")
-                            .find('td')
-                            .filter(function() {  // take right td
-                                return $(this).text().trim().toLowerCase().indexOf(key.toLowerCase()) >= 0
-                            })
-                            .first()
-                            .next() // take next td
-                            .text().trim().replace('%','g') // trim and change % to g since math do not recognize %
-        
+                .find('td')
+                .filter(function () { // take right td
+                    return $(this).text().trim().toLowerCase().indexOf(key.toLowerCase()) >= 0
+                })
+                .first()
+                .next() // take next td
+                .text().trim().replace('%', 'g') // trim and change % to g since math do not recognize %
+
             // default value with unit
             if (!txt || txt.length === 0 || txt.indexOf('<') >= 0)
-                return unit(0,'g')
-        
+                return unit(0, 'g')
+
             // take number convert to math object for easy manipulation
             // https://mathjs.org/docs/datatypes/units.html
             return unit(txt.split(' ')[0] + ' ' + txt.split(' ')[1])
@@ -240,16 +254,28 @@ class Migros extends Generic {
         const fibers = getValue('Ballaststoffe');
         const protein = getValue('Eiweiss');
         const fruitvegetables = getValue('Fruchtgehalt');
-        
+
         // convert salt to sodium 
-        const sodium = multiply(getValue('Salz'),.4).toNumber('g') > getValue('Natrium').toNumber('g') ? multiply(getValue('Salz'),.4) : getValue('Natrium');
+        const sodium = multiply(getValue('Salz'), .4).toNumber('g') > getValue('Natrium').toNumber('g') ? multiply(getValue('Salz'), .4) : getValue('Natrium');
 
         // TO ASK WHY FRUIT 0
         console.log({
-            energy,acids,sugar,fibers,protein,sodium, fruitvegetables
+            energy,
+            acids,
+            sugar,
+            fibers,
+            protein,
+            sodium,
+            fruitvegetables
         })
         return {
-            energy,acids,sugar,fibers,protein,sodium, fruitvegetables
+            energy,
+            acids,
+            sugar,
+            fibers,
+            protein,
+            sodium,
+            fruitvegetables
         }
     }
 
@@ -259,7 +285,7 @@ class Migros extends Generic {
      * @returns
      * @memberof Migros
      */
-    getBadgeParent(){
+    getBadgeParent() {
         return $('#info').first()
     }
 
@@ -269,11 +295,11 @@ class Migros extends Generic {
      *
      * @memberof Migros
      */
-    clean(){
+    clean() {
         // Single Product Page
         // Remove Availability Information
         $('.sidebar-availability-store-information, .sidebar-product-availability').remove()
-        
+
         // Remove Add to Favorite 
         $('.sidebar-favorite-button-container').remove()
 
@@ -287,6 +313,8 @@ class Migros extends Generic {
             .mui-share-buttons,
             .mui-footer-list-container,
             .mui-footer-link-area,
+            .sidebar-teaser,
+            .sidebar-retailer,
             .retailer-tabs,
             .mui-teaser-picture-desktop,
             .js-no-preferred-store,

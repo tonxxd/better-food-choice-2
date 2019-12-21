@@ -44,6 +44,9 @@ const getScoreLocal = (productCategory, {
     sugar
 }) => {
 
+    if(productCategory === 'unknown')
+        return
+
     // Code for calculation of NutriScore based
     // on the recognized values on the website.
 
@@ -84,7 +87,7 @@ const getScoreLocal = (productCategory, {
 
 
 
-    } else {
+    } else { //drink
 
         scores.energy = fromClassRange(acids, [0, 30, 60, 90, 120, 150, 180, 210, 240, 270]);
 
@@ -133,7 +136,7 @@ const getScoreLocal = (productCategory, {
         } else if (nutriScoreNumber <= 40) {
             nutriScore = "E";
         }
-    } else {
+    } else { // drink
         if (productCategory === 'water') {
             nutriScore = "A";
         } else if (nutriScoreNumber <= 1) {
@@ -163,6 +166,9 @@ export /**
  * @returns
  */
 const displayScore = (score, group, parent, size='big') => {
+
+    if(!score)
+        return
 
     const images = {
         A: chrome.runtime.getURL("nsA.png"),

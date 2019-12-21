@@ -12,5 +12,5 @@ export const API = {
 export const settings = {
     overviewBatchSize: 3,
 
-    disableApi: true
+    disableApi: false
 }
