@@ -13,11 +13,15 @@ class Tracker {
             pageUrl: window.location.href,
             userID: this.userID
         }
-        console.log(info)
+        console.log("track page", info)
+    }
+
+    trackSurvey(data){
+        console.log("track survey", data)
     }
 
     trackEvent(name, value){
-        console.log(name, value)
+        console.log("track event", name, value)
     }
 }
 

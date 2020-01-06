@@ -173,6 +173,8 @@ class Migros extends Generic {
     }
 
     getAddToCartButton(element){
+        if(!element)
+            return $(".sidebar-product-information").find(".mui-shoppinglist-add").first()
         return element.find('.mui-shoppinglist-button-add')
     }
 
@@ -303,6 +305,22 @@ class Migros extends Generic {
      */
     getBadgeParent() {
         return $('#info').first()
+    }
+
+    /**
+     * get product data from page
+     *
+     * @param {boolean} [customBody=false]
+     * @returns
+     * @memberof Migros
+     */
+    getProductData(customBody = false){
+        const $body = $(customBody || document);
+        return {
+            name: $body.find('.sidebar-product-name').first().text(),
+            price: $body.find('.current-price').first().text(),
+            img: $body.find('.product-stage-slider-image').first().attr("data-src")
+        }
     }
 
 
