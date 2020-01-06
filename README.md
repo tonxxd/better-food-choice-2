@@ -30,3 +30,10 @@ It does not yet work for the following type of products: All products with a hig
 The files with the name yoghurts.ttl and yoghurts.xml contain the data for roughly 110 yoghurts from Migros <br/>
 Java Backend is finished <br/> <br/>
 In order to use the extension, the backend has to be running on localhost:8080 as of right now
+
+
+## BUILD
+Make sure to have node and npm installed
+Download the repo
+From the root folder
+`npm watch` and `npm build` to run the development mode and build the package
