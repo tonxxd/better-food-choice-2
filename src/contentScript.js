@@ -13,7 +13,7 @@ const initApp = (tracker = new Tracker(localStorage.getItem("UserID"))) => {
   tracker.trackPage()
   
   const App = new BetterFoodChoice();
-  App.init();
+  App.init(localStorage.getItem("StudyGroup"));
 
   window.BetterFoodChoiceCart = new Cart();
   window.BetterFoodChoiceCart.render()
@@ -46,6 +46,10 @@ chrome.runtime.onMessage.addListener(function(request) {
 
         // set user id
         localStorage.setItem('UserID',request.payload.userID)
+
+        // set study group
+        localStorage.setItem('StudyGroup',request.payload.studyGroup)
+
 
         const survey = new Survey(request.payload.lang)
         survey.render((data) => {

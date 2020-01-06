@@ -48,7 +48,8 @@ const Popup = () => {
         (async()=>{
             if(!await Storage.get('userID')){
                 Storage.set({
-                    userID: shortid.generate()
+                    userID: shortid.generate(),
+                    studyGroup: ['A','B'][Math.random()<.5 ? 0 : 1]
                 })
             }
         })()
@@ -60,7 +61,8 @@ const Popup = () => {
             chrome.tabs.sendMessage(tabs[0].id, {payload: {
                 action:'startSurvey',
                 lang: await Storage.get('country'),
-                userID: await Storage.get('userID')
+                userID: await Storage.get('userID'),
+                studyGroup: await Storage.get('studyGroup'),
             }});
         });
 

@@ -1976,7 +1976,8 @@ var Popup = function Popup() {
               }
 
               _storage__WEBPACK_IMPORTED_MODULE_6__["default"].set({
-                userID: shortid__WEBPACK_IMPORTED_MODULE_7___default.a.generate()
+                userID: shortid__WEBPACK_IMPORTED_MODULE_7___default.a.generate(),
+                studyGroup: ['A', 'B'][Math.random() < .5 ? 0 : 1]
               });
 
             case 4:
@@ -2015,18 +2016,24 @@ var Popup = function Popup() {
 
               case 7:
                 _context3.t3 = _context3.sent;
-                _context3.t4 = {
+                _context3.next = 10;
+                return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('studyGroup');
+
+              case 10:
+                _context3.t4 = _context3.sent;
+                _context3.t5 = {
                   action: 'startSurvey',
                   lang: _context3.t2,
-                  userID: _context3.t3
+                  userID: _context3.t3,
+                  studyGroup: _context3.t4
                 };
-                _context3.t5 = {
-                  payload: _context3.t4
+                _context3.t6 = {
+                  payload: _context3.t5
                 };
 
-                _context3.t0.sendMessage.call(_context3.t0, _context3.t1, _context3.t5);
+                _context3.t0.sendMessage.call(_context3.t0, _context3.t1, _context3.t6);
 
-              case 11:
+              case 14:
               case "end":
                 return _context3.stop();
             }
