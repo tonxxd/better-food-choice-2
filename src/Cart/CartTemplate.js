@@ -54,7 +54,7 @@ const NotificationEl = posed.div({
 const Notification = props => {
 
     const [message, setMessage] = useState('Product Added!')
-    const [products, setProducts] = useState([])
+    const [products, setProducts] = useState(localStorage.getItem("bfc:cart") ? JSON.parse(localStorage.getItem("bfc:cart")) : [])
     const [showNoti, setShowNoti] = useState('hide')
     useEffect(() => {
        
@@ -85,13 +85,16 @@ const Notification = props => {
 
 const CartTemplate = props => {
 
-    const [products, setProducts] = useState([])
+
+    // restore cart or []
+    const [products, setProducts] = useState(localStorage.getItem("bfc:cart") ? JSON.parse(localStorage.getItem("bfc:cart")) : [])
     const [showCartList, setShowCartList] = useState(false)
 
     const removeProduct = (gtin) => {
         setProducts(p => p.filter(i => i.gtin !== gtin))
     }
 
+    // on init set actions for global object
     useEffect(() => {
         props.cartClass.addProduct = (p) => {
             props.cartClass.onAddToCart(p)
@@ -102,6 +105,12 @@ const CartTemplate = props => {
             removeProduct(gtin)
         }
     }, [])
+
+    // update cart in local storage
+    useEffect(()=>{
+        console.log("update memory")
+        localStorage.setItem("bfc:cart", JSON.stringify(products))
+    },[products])
 
     return [
         <Notification products={products} />,
