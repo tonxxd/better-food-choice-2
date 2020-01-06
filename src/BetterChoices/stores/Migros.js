@@ -37,14 +37,26 @@ class Migros extends Generic {
      *
      *
      * @param {*} u    url to filter list items
+     * @returns list item
+     * @memberof Migros
+     */
+    listItemFromHref(u) {
+        return $("body").find(".mui-product-tile").filter(function () {
+            return $(this).attr("href") == u;
+        }).first()
+    }
+
+    /**
+     *
+     *
+     * @param {*} u    url to filter list items
      * @returns parent for badge in the list item
      * @memberof Migros
      */
     listItemTargetFromHref(u) {
-        return $("body").find(".mui-product-tile").filter(function () {
-            return $(this).attr("href") == u;
-        }).first().find('.mui-js-rating').html("")
+        return this.listItemFromHref(u).find('.mui-js-rating').html("")
     }
+
 
 
     /**
@@ -158,6 +170,10 @@ class Migros extends Generic {
             )
             $(this).addClass('updatedBetterFoodChoice')
         })
+    }
+
+    getAddToCartButton(element){
+        return element.find('.mui-shoppinglist-button-add')
     }
 
 

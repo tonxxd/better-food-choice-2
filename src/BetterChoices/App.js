@@ -5,13 +5,14 @@ import {
 } from "./NutriScore";
 import Scraper from "./Scraper";
 import { settings } from "../config";
+import Tracker from "../Tracker";
 
 
 class BetterFoodChoice {
-    constructor(lang) {
+    constructor() {
 
-        // detect user country
-        localStorage.setItem('CountryName', lang || 'de')
+        // init tracker
+        this.tracker = new Tracker(localStorage.getItem("UserID"))
 
         // detect store
         this.getStore();
@@ -29,6 +30,9 @@ class BetterFoodChoice {
         try {
             // delete ads
             this.store.clean();
+
+            // track page
+            this.tracker.trackPage()
 
             // action based on page
             const pageType = this.store.getPageType();
@@ -97,6 +101,7 @@ class BetterFoodChoice {
 
                         // scrape urls in small batches to improve performances and prevent abuse
                         scraper.scrapeBatch(toScrape, (urlsSlice, bodies) => {
+                            
                             // calculate score
                             bodies.forEach((b, index) => {
                                 const nutri_score_final = getScoreLocal(
@@ -110,8 +115,31 @@ class BetterFoodChoice {
                                     'small'
                                     )
                             })
+
                             // update scraper urls
                             urls = [...urls, ...urlsSlice];
+
+                            // listen to add to cart events
+                            urlsSlice.forEach((e,i) => {
+                                
+                                // delete all events
+                                this.store.getAddToCartButton(this.store.listItemFromHref(e)).off('click');
+
+                                // listen to click
+                                this.store.getAddToCartButton(this.store.listItemFromHref(e)).on("click", (e) => {
+                                    e.stopPropagation()
+                                    e.preventDefault();
+                                    
+                                    //Add to cart
+                                    this.tracker.trackEvent("addToCart", this.store.getGTIN(bodies[i]))
+                                    window.BetterFoodChoiceCart.addProduct({
+                                        gtin: this.store.getGTIN(bodies[i]),
+                                        name: 'temp'
+                                    })
+                                })
+
+                            })
+
                         });
                         
                         

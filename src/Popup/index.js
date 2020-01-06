@@ -3,6 +3,7 @@ import { h } from 'preact';
 import {useState, useEffect} from 'preact/hooks'
 import './popup.scss';
 import Storage from './storage'
+import shortid from 'shortid';
 
 
 const Settings = ({goBack}) => {
@@ -47,7 +48,7 @@ const Popup = () => {
         (async()=>{
             if(!await Storage.get('userID')){
                 Storage.set({
-                    userID: 'test'
+                    userID: shortid.generate()
                 })
             }
         })()

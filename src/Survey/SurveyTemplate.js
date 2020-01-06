@@ -110,7 +110,8 @@ const Survey = (props) => {
                         income: number().integer().required(),
                         genre: number().integer().required()
                       })}
-                      initialValues={{genre:false,age:'',education:false,income:false}}
+                      //initialValues={{genre:false,age:'',education:false,income:false}}
+                      initialValues={{genre:1,age:'30',education:1,income:1}}
 
                 >{({setFieldValue, values, errors, isSubmitting }) => 
                     <Form>

@@ -2,11 +2,20 @@
 import 'babel-polyfill'
 import BetterFoodChoice from "./BetterChoices/App";
 import Survey from "./Survey";
+import Cart from './Cart';
 
-// run app if already did survey
-if(localStorage.getItem('IntroSurvey'=='true')){
+const initApp = () => {
   const App = new BetterFoodChoice();
   App.init();
+
+  window.BetterFoodChoiceCart = new Cart();
+  BetterFoodChoiceCart.render()
+
+}
+
+// run app if already did survey
+if(localStorage.getItem('IntroSurvey'==true)){
+  initApp()
 }
 
 
@@ -30,8 +39,7 @@ chrome.runtime.onMessage.addListener(function(request) {
           })
 
           // callback when done survey  
-          const App = new BetterFoodChoice();
-          App.init() // group default = A, user id from local storage
+          initApp()
         
           // set did intro survey
           localStorage.setItem("IntroSurvey",'true')
