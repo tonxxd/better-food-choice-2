@@ -12,6 +12,15 @@ const config = merge(common, {
     contentScript: PATHS.src + '/contentScript.js',
     background: PATHS.src + '/background.js',
   },
+  "resolve": { 
+    alias: { 
+      "react": "preact/compat",
+      "React": "preact/compat",
+      "react-dom/test-utils": "preact/test-utils",
+      "react-dom": "preact/compat",
+    }
+  }
+  
 });
 
 module.exports = config;

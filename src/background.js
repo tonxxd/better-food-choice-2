@@ -1,4 +1,3 @@
-'use strict';
 
 // listen for extension button click to open main settings modal
 

@@ -19,7 +19,7 @@
     "default_title": "Better Food-choice-extension",
     "default_popup": "popup.html"
   },
-  "web_accessible_resources": ["nsA.png", "nsB.png", "nsC.png", "nsD.png", "nsE.png", "nsV.png"],
+  "web_accessible_resources": ["nsA.png", "nsB.png", "nsC.png", "nsD.png", "nsE.png", "nsV.png","survey.jpg"],
   "permissions": ["tabs", "activeTab", "storage"],
   "content_scripts": [
     {

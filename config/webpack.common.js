@@ -28,20 +28,42 @@ const common = {
       // Help webpack in understanding CSS files imported in .js files
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        use: ['style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+            },
+          }
+        ],
       },
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: 'babel-loader'
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          // Creates `style` nodes from JS strings
+          'style-loader',
+          // Translates CSS into CommonJS
+          'css-loader',
+          // Compiles Sass to CSS
+          'sass-loader',
+        ],
+      },
+
       // Check for images imported in .js files and
       {
         test: /\.(png|jpe?g|gif)$/i,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              outputPath: 'images',
-              name: '[name].[ext]',
-            },
+        use: [{
+          loader: 'file-loader',
+          options: {
+            outputPath: 'images',
+            name: '[name].[ext]',
           },
-        ],
+        }, ],
       },
     ],
   },
@@ -49,12 +71,10 @@ const common = {
     // Print file sizes
     new SizePlugin(),
     // Copy static assets from `public` folder to `build` folder
-    new CopyWebpackPlugin([
-      {
-        from: '**/*',
-        context: 'public',
-      },
-    ]),
+    new CopyWebpackPlugin([{
+      from: '**/*',
+      context: 'public',
+    }, ]),
     // Extract CSS into separate files
     new MiniCssExtractPlugin({
       filename: '[name].css',
