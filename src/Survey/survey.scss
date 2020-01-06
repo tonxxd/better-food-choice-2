@@ -1,0 +1,196 @@
+
+@import "../vars.scss";
+
+#bfcSurveyEl {
+  @import "./radio.scss";
+
+
+  overflow: scroll;
+  .modal {
+    all: initial;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999999999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .8);
+  }
+
+   * {
+    all: initial;
+    font-family: Roboto;
+    display: block;
+    box-sizing: border-box;
+  }
+
+  .modalInner {
+
+    color: rgba(0, 0, 0, .8);
+    max-width: 70vw;
+    max-height: 90vh;
+    overflow: scroll;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, .1);
+  }
+
+  h1{
+    font-weight: bold;
+    margin: 10px 0;
+  }
+
+
+
+  h2 {
+    font-weight: lighter;
+    font-size: 22px;
+    margin: 10px 0;
+  }
+
+
+  form {
+    width: 100%;
+    height: 100%;
+  }
+  .intro {
+    width: 100%;
+    height: 100%;
+    .left, .right {
+      font-size: 0;
+      display: inline-block;
+      overflow: scroll;
+      height: 100%;
+    }
+
+
+
+    .right {
+      width: 100%;
+      flex-direction: column;
+      background-color: #f4f6fa;
+      padding: 50px;
+      
+    }
+  }
+  h1 {
+    color: $primary;
+    font-size: 30px;
+    text-transform: uppercase;
+  }
+  p {
+      font-size: 14px;
+      color: rgba(0,0,0,.5);
+      margin-bottom: 20px;
+      line-height: 1.4;
+      display: block;
+    }
+
+
+  label {
+    margin: 15px 0;
+    font-size: 18px;
+    color: rgba(0,0,0,.6);
+  }
+
+  .error {
+    color: red;
+    font-size: 14px;
+  }
+
+
+  .step {
+    padding: 60px;
+  }
+
+  .question {
+    margin-bottom: 30px;
+    min-width: 500px;
+  }
+
+
+  .next {
+    cursor: pointer;
+    background-color: $primary;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .next:hover {
+    color: white;
+  }
+
+  .input {
+    border: 1px solid transparent;
+    border-color: $primary;
+    box-shadow: inset 0 0.0625em 0.125em rgba(10, 10, 10, .05);
+    max-width: 100%;
+    width: 300px;
+    border-radius: 4px;
+    color: #363636;
+    font-size: 24px;
+    justify-content: flex-start;
+    line-height: 1.5;
+    padding: 10px 20px;
+    position: relative;
+    vertical-align: top;
+  }
+
+
+
+
+  .stepsSelector {
+    margin: 30px 0;
+    padding: 0;
+    li {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: $primary;
+      border-radius: 50%;
+      margin: 0 30px;
+      &.active {
+        transform: scale(1.1);
+      }
+      transition: all .2s;
+      &:hover {
+        transform: scale(1.1);
+      }
+      cursor: pointer;
+      span {
+        color: white;
+        font-size: 20px;
+        position: relative;
+        z-index: 2;
+        pointer-events: none;
+      }
+      &:last-child {
+        &::after {
+          display: none;
+        }
+      }
+      &:after {
+        height: 4px;
+        background: $primary;
+        width: 100px;
+        left: 50%;
+        position: absolute;
+        top: calc(50% - 2px);
+        content: "";
+      }
+    }
+  }
+
+}

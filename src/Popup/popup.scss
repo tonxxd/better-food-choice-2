@@ -1,0 +1,31 @@
+@import "bulma/sass/utilities/_all.sass";
+@import "bulma/sass/base/_all.sass";
+@import "bulma/sass/grid/columns.sass";
+@import "bulma/sass/elements/button.sass";
+@import "bulma/sass/elements/title.sass";
+@import "bulma/sass/form/_all.sass";
+
+/* normalize css starts here */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+/* normalize css ends here */
+
+
+
+body {
+    padding: 30px;
+    width: 300px;
+    background: #f7f7f7;
+}
+
+
+.settings {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
