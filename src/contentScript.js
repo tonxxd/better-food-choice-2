@@ -7,14 +7,25 @@ import Tracker from './Tracker';
 import $ from 'jquery';
 
 
-const initApp = (tracker = new Tracker(localStorage.getItem("UserID"))) => {
+/**
+ *  initialize app
+ * function is called every time the page loads
+ * default tracker if not itialized with survey
+ *
+ * @param {string} [tracker=new Tracker(localStorage.getItem("bfc:userID"))]
+ */
+const initApp = (tracker = new Tracker(localStorage.getItem("bfc:userID"))) => {
   
   // track page
   tracker.trackPage()
   
   // init main plugin class
   const App = new BetterFoodChoice();
-  App.init(localStorage.getItem("StudyGroup"));
+  App.init(localStorage.getItem("bfc:studyGroup"));
+
+  // if study completed disable cart
+  if(localStorage.getItem("bfc:studyStatus") == 2)
+    return
 
   // init cart class
   window.BetterFoodChoiceCart = new Cart();
@@ -30,21 +41,24 @@ const initApp = (tracker = new Tracker(localStorage.getItem("UserID"))) => {
 
   // on finished study
   window.BetterFoodChoiceCart.onFinishStudy = (basket) => {
+
+    // set finish study
+    localStorage.setItem("bfc:studyStatus",2)
     
     tracker.trackEvent("finishStudy", basket);
     
-
     App.showAlert('Thank you!', 'You completed the study', ()=>{
       $("#bfcCart").remove();
     })
     
     /**
+     * comunicate to popup the end of the study
      * chrom bug, if just send the message to popup it gets Unchecked error
      * solution from  https://stackoverflow.com/questions/54181734/chrome-extension-message-passing-unchecked-runtime-lasterror-could-not-establi
      *
      */
     const ping = () => {
-      chrome.runtime.sendMessage({action: "bfc:studyFinish"}, response => {
+      chrome.runtime.sendMessage({action: "bfc:endStudy"}, response => {
         if(chrome.runtime.lastError) {
           setTimeout(ping, 1000);
         }
@@ -58,7 +72,7 @@ const initApp = (tracker = new Tracker(localStorage.getItem("UserID"))) => {
 
 
 // run app if already did survey
-if(localStorage.getItem('IntroSurvey')=='true'){
+if(localStorage.getItem('bfc:introSurvey')=='true'){
   initApp()
 }
 
@@ -70,17 +84,17 @@ chrome.runtime.onMessage.addListener(function(request) {
         console.log(request)
 
         // set user id
-        localStorage.setItem('UserID',request.payload.userID)
+        localStorage.setItem('bfc:userID',request.payload.userID)
 
         // set study group
-        localStorage.setItem('StudyGroup',request.payload.studyGroup)
+        localStorage.setItem('bfc:studyGroup',request.payload.bfc:studyGroup)
 
 
         const survey = new Survey(request.payload.lang)
         survey.render((data) => {
           
           // language change
-          localStorage.setItem("CountryName", data.lang)
+          localStorage.setItem("bfc:country", data.lang)
 
           // init tracker
           const tracker = new Tracker(request.payload.userID)
@@ -88,7 +102,7 @@ chrome.runtime.onMessage.addListener(function(request) {
 
           // send infos to backed
           tracker.trackSurvey({
-            userID: localStorage.getItem('UserID'),
+            userID: localStorage.getItem('bfc:userID'),
             data 
           })
 
@@ -96,7 +110,7 @@ chrome.runtime.onMessage.addListener(function(request) {
           initApp(tracker)
         
           // set did intro survey
-          localStorage.setItem("IntroSurvey",'true')
+          localStorage.setItem("bfc:introSurvey",'true')
         
         });
 

@@ -191,7 +191,7 @@ class Migros extends Generic {
      */
     changePrice(customPriceEl = false, customUsualPriceEl = false, customDiscountContainer = false) {
 
-        const userCountry = localStorage.getItem("CountryName");
+        const userCountry = localStorage.getItem("bfc:country");
 
         const currentPriceEl = customPriceEl || $('.current-price');
         const usualPriceEl = customUsualPriceEl || $('.usual-price');
