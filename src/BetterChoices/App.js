@@ -7,7 +7,7 @@ import Scraper from "./Scraper";
 import {
     settings
 } from "../config";
-import Tracker from "../Tracker";
+import $ from "jquery";
 
 
 class BetterFoodChoice {
@@ -201,6 +201,55 @@ class BetterFoodChoice {
 
         return this.store;
     }
+
+    showAlert(title, text, actionHandler) {
+        const $alertWrapper = $("<div />").css({
+            position:'fixed',
+            top:0,
+            left:0,
+            width:'100vw',
+            height: '100vh',
+            zIndex:99999999,
+            display: 'flex',
+            alignItems:'center',
+            justifyContent: 'center',
+            background: 'rgba(0,0,0,.3)'
+        })
+        const $alert = $('<div />').css({
+            width: '500px',
+            padding: 30,
+            background: 'white',
+            borderRadius:5,
+            boxShadow: '0 5px 10px rgba(0,0,0,.2)'
+        })
+        const $h1 = $("<h1/>").css({
+            color: 'rgba(0,0,0,.6)',
+            fontSize: 30,
+            margin: '0 0 10px 0',
+            fontFamily: 'Roboto'
+        }).text(title)
+        const $p = $("<p/>").css({
+            fontSize: 14,
+            color: 'rgba(0,0,0,.4)',
+            lineHeight:'1.5',
+            margin:0
+        }).text(text)
+        const $action = $("<button />").css({
+            background: 'rgba(0,0,0,.4)',
+            color: 'white',
+            padding: '10px 20px',
+            borderRadius:4,
+            marginTop:20
+        }).text("Close").on("click", (e) => {
+            e.preventDefault();
+            $alertWrapper.remove();
+            actionHandler()
+        })
+
+        $("body").append($alertWrapper.append($alert.append($h1, $p, $action)));
+
+    }
+
 }
 
 export default BetterFoodChoice;

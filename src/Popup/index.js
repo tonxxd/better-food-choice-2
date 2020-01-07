@@ -6,6 +6,7 @@ import Storage from './storage'
 import shortid from 'shortid';
 
 
+
 const Settings = ({goBack}) => {
 
     const [country, setCountry] = useState(false);
@@ -43,23 +44,57 @@ const Settings = ({goBack}) => {
 
 const Popup = () => {
 
+
+    const [studyStatus, setStudyStatus] = useState(0)
+
     useEffect(()=>{
         // generate user id if not defined
         (async()=>{
+
+            console.log(await Storage.getAll())
+
+
             if(!await Storage.get('userID')){
+                console.log("ciao")
                 Storage.set({
                     userID: shortid.generate(),
+                    country: 'de',
                     studyGroup: ['A','B'][Math.random()<.5 ? 0 : 1]
                 })
             }
+
+            console.log(await Storage.getAll())
+
+
+            setStudyStatus(await Storage.get("studyStatus") || 0)
+
         })()
     },[])
-    const startStudy = e => {
+
+    useEffect(() => {
+        if(studyStatus)
+            Storage.set({studyStatus})
+    }, [studyStatus])
+
+
+    const startStudy = async e => {
         e.preventDefault();
 
+        // prevent if wrong website
+
+        console.log(await Storage.getAll())
+
+        // update state
+        setStudyStatus(1);
+
+        console.log(await Storage.getAll())
+
         chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {
+
+            console.log(await Storage.getAll())
+            
             chrome.tabs.sendMessage(tabs[0].id, {payload: {
-                action:'startSurvey',
+                action:'bfc:startSurvey',
                 lang: await Storage.get('country'),
                 userID: await Storage.get('userID'),
                 studyGroup: await Storage.get('studyGroup'),
@@ -77,7 +112,9 @@ const Popup = () => {
                     <h1 class="title">Better Food Choices</h1>
                     <h2 class="subtitle">Study</h2>
                     <a href="#" onClick={e => setPage('settings')} class="has-text-dark is-size-6 settings">Settings</a>
-                    <button class="button is-primary" onClick={startStudy}>Start study</button>
+                    {studyStatus === 0 && <button class="button is-primary" onClick={startStudy}>Start study</button>}
+                    {studyStatus === 1 && <p>Go on and start shopping!</p>}
+                    {studyStatus === 2 && <p>Study finished, thank you!</p>}
                 </div> 
             )}
             {page == 'settings' && <Settings goBack={setPage} />}

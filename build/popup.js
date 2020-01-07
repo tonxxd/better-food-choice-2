@@ -1957,6 +1957,11 @@ var Settings = function Settings(_ref) {
 };
 
 var Popup = function Popup() {
+  var _useState3 = Object(preact_hooks__WEBPACK_IMPORTED_MODULE_4__["useState"])(0),
+      _useState4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_2___default()(_useState3, 2),
+      studyStatus = _useState4[0],
+      setStudyStatus = _useState4[1];
+
   Object(preact_hooks__WEBPACK_IMPORTED_MODULE_4__["useEffect"])(function () {
     // generate user id if not defined
     _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
@@ -1966,21 +1971,60 @@ var Popup = function Popup() {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              _context2.next = 2;
+              _context2.t0 = console;
+              _context2.next = 3;
+              return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].getAll();
+
+            case 3:
+              _context2.t1 = _context2.sent;
+
+              _context2.t0.log.call(_context2.t0, _context2.t1);
+
+              _context2.next = 7;
               return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('userID');
 
-            case 2:
+            case 7:
               if (_context2.sent) {
-                _context2.next = 4;
+                _context2.next = 10;
                 break;
               }
 
+              console.log("ciao");
               _storage__WEBPACK_IMPORTED_MODULE_6__["default"].set({
                 userID: shortid__WEBPACK_IMPORTED_MODULE_7___default.a.generate(),
+                country: 'de',
                 studyGroup: ['A', 'B'][Math.random() < .5 ? 0 : 1]
               });
 
-            case 4:
+            case 10:
+              _context2.t2 = console;
+              _context2.next = 13;
+              return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].getAll();
+
+            case 13:
+              _context2.t3 = _context2.sent;
+
+              _context2.t2.log.call(_context2.t2, _context2.t3);
+
+              _context2.t4 = setStudyStatus;
+              _context2.next = 18;
+              return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get("studyStatus");
+
+            case 18:
+              _context2.t5 = _context2.sent;
+
+              if (_context2.t5) {
+                _context2.next = 21;
+                break;
+              }
+
+              _context2.t5 = 0;
+
+            case 21:
+              _context2.t6 = _context2.t5;
+              (0, _context2.t4)(_context2.t6);
+
+            case 23:
             case "end":
               return _context2.stop();
           }
@@ -1988,69 +2032,125 @@ var Popup = function Popup() {
       }, _callee2);
     }))();
   }, []);
+  Object(preact_hooks__WEBPACK_IMPORTED_MODULE_4__["useEffect"])(function () {
+    if (studyStatus) _storage__WEBPACK_IMPORTED_MODULE_6__["default"].set({
+      studyStatus: studyStatus
+    });
+  }, [studyStatus]);
 
-  var startStudy = function startStudy(e) {
-    e.preventDefault();
-    chrome.tabs.query({
-      active: true,
-      currentWindow: true
-    },
+  var startStudy =
+  /*#__PURE__*/
+  function () {
+    var _ref4 = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
     /*#__PURE__*/
-    function () {
-      var _ref4 = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(tabs) {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                _context3.t0 = chrome.tabs;
-                _context3.t1 = tabs[0].id;
-                _context3.next = 4;
-                return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('country');
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(e) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              e.preventDefault(); // prevent if wrong website
 
-              case 4:
-                _context3.t2 = _context3.sent;
-                _context3.next = 7;
-                return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('userID');
+              _context4.t0 = console;
+              _context4.next = 4;
+              return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].getAll();
 
-              case 7:
-                _context3.t3 = _context3.sent;
-                _context3.next = 10;
-                return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('studyGroup');
+            case 4:
+              _context4.t1 = _context4.sent;
 
-              case 10:
-                _context3.t4 = _context3.sent;
-                _context3.t5 = {
-                  action: 'startSurvey',
-                  lang: _context3.t2,
-                  userID: _context3.t3,
-                  studyGroup: _context3.t4
+              _context4.t0.log.call(_context4.t0, _context4.t1);
+
+              // update state
+              setStudyStatus(1);
+              _context4.t2 = console;
+              _context4.next = 10;
+              return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].getAll();
+
+            case 10:
+              _context4.t3 = _context4.sent;
+
+              _context4.t2.log.call(_context4.t2, _context4.t3);
+
+              chrome.tabs.query({
+                active: true,
+                currentWindow: true
+              },
+              /*#__PURE__*/
+              function () {
+                var _ref5 = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
+                /*#__PURE__*/
+                _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(tabs) {
+                  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+                    while (1) {
+                      switch (_context3.prev = _context3.next) {
+                        case 0:
+                          _context3.t0 = console;
+                          _context3.next = 3;
+                          return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].getAll();
+
+                        case 3:
+                          _context3.t1 = _context3.sent;
+
+                          _context3.t0.log.call(_context3.t0, _context3.t1);
+
+                          _context3.t2 = chrome.tabs;
+                          _context3.t3 = tabs[0].id;
+                          _context3.next = 9;
+                          return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('country');
+
+                        case 9:
+                          _context3.t4 = _context3.sent;
+                          _context3.next = 12;
+                          return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('userID');
+
+                        case 12:
+                          _context3.t5 = _context3.sent;
+                          _context3.next = 15;
+                          return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('studyGroup');
+
+                        case 15:
+                          _context3.t6 = _context3.sent;
+                          _context3.t7 = {
+                            action: 'bfc:startSurvey',
+                            lang: _context3.t4,
+                            userID: _context3.t5,
+                            studyGroup: _context3.t6
+                          };
+                          _context3.t8 = {
+                            payload: _context3.t7
+                          };
+
+                          _context3.t2.sendMessage.call(_context3.t2, _context3.t3, _context3.t8);
+
+                        case 19:
+                        case "end":
+                          return _context3.stop();
+                      }
+                    }
+                  }, _callee3);
+                }));
+
+                return function (_x2) {
+                  return _ref5.apply(this, arguments);
                 };
-                _context3.t6 = {
-                  payload: _context3.t5
-                };
+              }());
 
-                _context3.t0.sendMessage.call(_context3.t0, _context3.t1, _context3.t6);
-
-              case 14:
-              case "end":
-                return _context3.stop();
-            }
+            case 13:
+            case "end":
+              return _context4.stop();
           }
-        }, _callee3);
-      }));
+        }
+      }, _callee4);
+    }));
 
-      return function (_x) {
-        return _ref4.apply(this, arguments);
-      };
-    }());
-  };
+    return function startStudy(_x) {
+      return _ref4.apply(this, arguments);
+    };
+  }();
 
-  var _useState3 = Object(preact_hooks__WEBPACK_IMPORTED_MODULE_4__["useState"])('home'),
-      _useState4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_2___default()(_useState3, 2),
-      page = _useState4[0],
-      setPage = _useState4[1];
+  var _useState5 = Object(preact_hooks__WEBPACK_IMPORTED_MODULE_4__["useState"])('home'),
+      _useState6 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_2___default()(_useState5, 2),
+      page = _useState6[0],
+      setPage = _useState6[1];
 
   return Object(preact__WEBPACK_IMPORTED_MODULE_3__["h"])("div", {
     id: "popup"
@@ -2066,10 +2166,10 @@ var Popup = function Popup() {
       return setPage('settings');
     },
     "class": "has-text-dark is-size-6 settings"
-  }, "Settings"), Object(preact__WEBPACK_IMPORTED_MODULE_3__["h"])("button", {
+  }, "Settings"), studyStatus === 0 && Object(preact__WEBPACK_IMPORTED_MODULE_3__["h"])("button", {
     "class": "button is-primary",
     onClick: startStudy
-  }, "Start study")), page == 'settings' && Object(preact__WEBPACK_IMPORTED_MODULE_3__["h"])(Settings, {
+  }, "Start study"), studyStatus === 1 && Object(preact__WEBPACK_IMPORTED_MODULE_3__["h"])("p", null, "Go on and start shopping!"), studyStatus === 2 && Object(preact__WEBPACK_IMPORTED_MODULE_3__["h"])("p", null, "Study finished, thank you!")), page == 'settings' && Object(preact__WEBPACK_IMPORTED_MODULE_3__["h"])(Settings, {
     goBack: setPage
   }));
 };
@@ -2169,6 +2269,15 @@ function () {
       return get;
     }()
   }, {
+    key: "getAll",
+    value: function getAll() {
+      return new Promise(function (res) {
+        chrome.storage.sync.get(null, function (result) {
+          res(result);
+        });
+      });
+    }
+  }, {
     key: "set",
     value: function () {
       var _set = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
@@ -2218,9 +2327,19 @@ function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
 /* harmony import */ var _Popup_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Popup/index.js */ "./src/Popup/index.js");
+/* harmony import */ var _Popup_storage_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Popup/storage.js */ "./src/Popup/storage.js");
 
 
-Object(preact__WEBPACK_IMPORTED_MODULE_0__["render"])(Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(_Popup_index_js__WEBPACK_IMPORTED_MODULE_1__["default"], null), document.getElementById('app'));
+
+Object(preact__WEBPACK_IMPORTED_MODULE_0__["render"])(Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(_Popup_index_js__WEBPACK_IMPORTED_MODULE_1__["default"], null), document.getElementById('app')); // update status when finished test
+
+chrome.runtime.onMessage.addListener(function (request) {
+  if (request.action === 'bfc:studyFinish') {
+    _Popup_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"].set({
+      studyStatus: 2
+    });
+  }
+});
 
 /***/ })
 

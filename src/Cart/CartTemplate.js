@@ -58,7 +58,6 @@ const Notification = props => {
     const [showNoti, setShowNoti] = useState('hide')
     useEffect(() => {
        
-
         if(products.length > props.products.length){
             setMessage("Product Removed!")
             setShowNoti('show')

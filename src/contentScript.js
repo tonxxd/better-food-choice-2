@@ -12,11 +12,15 @@ const initApp = (tracker = new Tracker(localStorage.getItem("UserID"))) => {
   // track page
   tracker.trackPage()
   
+  // init main plugin class
   const App = new BetterFoodChoice();
   App.init(localStorage.getItem("StudyGroup"));
 
+  // init cart class
   window.BetterFoodChoiceCart = new Cart();
   window.BetterFoodChoiceCart.render()
+  
+  // track events
   window.BetterFoodChoiceCart.onAddToCart = (product) => {
     tracker.trackEvent("addToCart", product)
   }
@@ -24,10 +28,29 @@ const initApp = (tracker = new Tracker(localStorage.getItem("UserID"))) => {
     tracker.trackEvent("removeFromCart", product)
   }
 
+  // on finished study
   window.BetterFoodChoiceCart.onFinishStudy = (basket) => {
+    
     tracker.trackEvent("finishStudy", basket);
-    alert("Thanks!")
-    $("#bfcCart").remove();
+    
+
+    App.showAlert('Thank you!', 'You completed the study', ()=>{
+      $("#bfcCart").remove();
+    })
+    
+    /**
+     * chrom bug, if just send the message to popup it gets Unchecked error
+     * solution from  https://stackoverflow.com/questions/54181734/chrome-extension-message-passing-unchecked-runtime-lasterror-could-not-establi
+     *
+     */
+    const ping = () => {
+      chrome.runtime.sendMessage({action: "bfc:studyFinish"}, response => {
+        if(chrome.runtime.lastError) {
+          setTimeout(ping, 1000);
+        }
+      });
+    }
+    ping();
     
   }
 
@@ -42,7 +65,9 @@ if(localStorage.getItem('IntroSurvey')=='true'){
 
 // init survey 
 chrome.runtime.onMessage.addListener(function(request) {
-      if (request.payload.action == "startSurvey"){
+      if (request.payload.action == "bfc:startSurvey"){
+
+        console.log(request)
 
         // set user id
         localStorage.setItem('UserID',request.payload.userID)
