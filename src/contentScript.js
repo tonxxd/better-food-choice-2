@@ -51,21 +51,6 @@ const initApp = (tracker = new Tracker(localStorage.getItem("bfc:userID"))) => {
       $("#bfcCart").remove();
     })
     
-    /**
-     * comunicate to popup the end of the study
-     * chrom bug, if just send the message to popup it gets Unchecked error
-     * solution from  https://stackoverflow.com/questions/54181734/chrome-extension-message-passing-unchecked-runtime-lasterror-could-not-establi
-     *
-     */
-    const ping = () => {
-      chrome.runtime.sendMessage({action: "bfc:endStudy"}, response => {
-        if(chrome.runtime.lastError) {
-          setTimeout(ping, 1000);
-        }
-      });
-    }
-    ping();
-    
   }
 
 }
@@ -78,16 +63,18 @@ if(localStorage.getItem('bfc:introSurvey')=='true'){
 
 
 // init survey 
-chrome.runtime.onMessage.addListener(function(request) {
-      if (request.payload.action == "bfc:startSurvey"){
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
-        console.log(request)
+      if (request.payload.action == "bfc:startSurvey"){
 
         // set user id
         localStorage.setItem('bfc:userID',request.payload.userID)
 
+        // set study status 
+        localStorage.setItem('bfc:studyStatus',1)
+
         // set study group
-        localStorage.setItem('bfc:studyGroup',request.payload.bfc:studyGroup)
+        localStorage.setItem('bfc:studyGroup',request.payload.studyGroup)
 
 
         const survey = new Survey(request.payload.lang)
@@ -114,5 +101,10 @@ chrome.runtime.onMessage.addListener(function(request) {
         
         });
 
+      }
+
+      // update status in popup
+      if(request.payload.action === 'bfc:getStudyStatus'){
+        sendResponse(localStorage.getItem("bfc:studyStatus") || 0)
       }
 });

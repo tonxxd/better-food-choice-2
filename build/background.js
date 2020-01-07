@@ -93,17 +93,7 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-// listen for extension button click to open main settings modal
-chrome.browserAction.onClicked.addListener(function () {
-  chrome.tabs.query({
-    active: true,
-    currentWindow: true
-  }, function (tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, {
-      Notice: "The button was clicked"
-    }, function () {});
-  });
-});
+
 
 /***/ })
 

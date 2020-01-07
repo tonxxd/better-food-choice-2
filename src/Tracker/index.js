@@ -14,14 +14,18 @@ class Tracker {
             userID: this.userID
         }
         console.log("track page", info)
+
+        // TODO send data
     }
 
     trackSurvey(data){
         console.log("track survey", data)
+        // TODO send data
     }
 
     trackEvent(name, value){
         console.log("track event", name, value)
+        // TODO send data
     }
 }
 

@@ -15,6 +15,9 @@
     ],
     "persistent": false
   },
+  "externally_connectable": {
+    "matches": ["*://*.migros.ch/*"]
+  },
   "browser_action": {
     "default_title": "Better Food-choice-extension",
     "default_popup": "popup.html"

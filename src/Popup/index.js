@@ -51,11 +51,9 @@ const Popup = () => {
         // generate user id if not defined
         (async()=>{
 
-            console.log(await Storage.getAll())
 
 
             if(!await Storage.get('userID')){
-                console.log("ciao")
                 Storage.set({
                     userID: shortid.generate(),
                     country: 'de',
@@ -63,36 +61,29 @@ const Popup = () => {
                 })
             }
 
-            console.log(await Storage.getAll())
 
-
-            setStudyStatus(await Storage.get("studyStatus") || 0)
+            // ask for updated study status from content script
+            chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {
+                chrome.tabs.sendMessage(tabs[0].id, {payload: {
+                    action: 'bfc:getStudyStatus'
+                }}, res => {
+                    setStudyStatus(parseInt(res) || 0)
+                });
+            })
 
         })()
     },[])
-
-    useEffect(() => {
-        if(studyStatus)
-            Storage.set({studyStatus})
-    }, [studyStatus])
 
 
     const startStudy = async e => {
         e.preventDefault();
 
-        // prevent if wrong website
-
-        console.log(await Storage.getAll())
+        // prevent if wrong website TODOOOO
 
         // update state
         setStudyStatus(1);
 
-        console.log(await Storage.getAll())
-
-        chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {
-
-            console.log(await Storage.getAll())
-            
+        chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {            
             chrome.tabs.sendMessage(tabs[0].id, {payload: {
                 action:'bfc:startSurvey',
                 lang: await Storage.get('country'),

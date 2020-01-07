@@ -1966,184 +1966,150 @@ var Popup = function Popup() {
     // generate user id if not defined
     _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
         while (1) {
-          switch (_context2.prev = _context2.next) {
+          switch (_context3.prev = _context3.next) {
             case 0:
-              _context2.t0 = console;
-              _context2.next = 3;
-              return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].getAll();
-
-            case 3:
-              _context2.t1 = _context2.sent;
-
-              _context2.t0.log.call(_context2.t0, _context2.t1);
-
-              _context2.next = 7;
+              _context3.next = 2;
               return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('userID');
 
-            case 7:
-              if (_context2.sent) {
-                _context2.next = 10;
+            case 2:
+              if (_context3.sent) {
+                _context3.next = 4;
                 break;
               }
 
-              console.log("ciao");
               _storage__WEBPACK_IMPORTED_MODULE_6__["default"].set({
                 userID: shortid__WEBPACK_IMPORTED_MODULE_7___default.a.generate(),
                 country: 'de',
                 studyGroup: ['A', 'B'][Math.random() < .5 ? 0 : 1]
               });
 
-            case 10:
-              _context2.t2 = console;
-              _context2.next = 13;
-              return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].getAll();
-
-            case 13:
-              _context2.t3 = _context2.sent;
-
-              _context2.t2.log.call(_context2.t2, _context2.t3);
-
-              _context2.t4 = setStudyStatus;
-              _context2.next = 18;
-              return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get("studyStatus");
-
-            case 18:
-              _context2.t5 = _context2.sent;
-
-              if (_context2.t5) {
-                _context2.next = 21;
-                break;
-              }
-
-              _context2.t5 = 0;
-
-            case 21:
-              _context2.t6 = _context2.t5;
-              (0, _context2.t4)(_context2.t6);
-
-            case 23:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2);
-    }))();
-  }, []);
-  Object(preact_hooks__WEBPACK_IMPORTED_MODULE_4__["useEffect"])(function () {
-    if (studyStatus) _storage__WEBPACK_IMPORTED_MODULE_6__["default"].set({
-      studyStatus: studyStatus
-    });
-  }, [studyStatus]);
-
-  var startStudy =
-  /*#__PURE__*/
-  function () {
-    var _ref4 = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
-    /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(e) {
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
-        while (1) {
-          switch (_context4.prev = _context4.next) {
-            case 0:
-              e.preventDefault(); // prevent if wrong website
-
-              _context4.t0 = console;
-              _context4.next = 4;
-              return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].getAll();
-
             case 4:
-              _context4.t1 = _context4.sent;
-
-              _context4.t0.log.call(_context4.t0, _context4.t1);
-
-              // update state
-              setStudyStatus(1);
-              _context4.t2 = console;
-              _context4.next = 10;
-              return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].getAll();
-
-            case 10:
-              _context4.t3 = _context4.sent;
-
-              _context4.t2.log.call(_context4.t2, _context4.t3);
-
+              // ask for updated study status from content script
               chrome.tabs.query({
                 active: true,
                 currentWindow: true
               },
               /*#__PURE__*/
               function () {
-                var _ref5 = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
+                var _ref4 = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
                 /*#__PURE__*/
-                _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(tabs) {
-                  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+                _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(tabs) {
+                  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
                     while (1) {
-                      switch (_context3.prev = _context3.next) {
+                      switch (_context2.prev = _context2.next) {
                         case 0:
-                          _context3.t0 = console;
-                          _context3.next = 3;
-                          return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].getAll();
+                          chrome.tabs.sendMessage(tabs[0].id, {
+                            payload: {
+                              action: 'bfc:getStudyStatus'
+                            }
+                          }, function (res) {
+                            setStudyStatus(parseInt(res) || 0);
+                          });
 
-                        case 3:
-                          _context3.t1 = _context3.sent;
-
-                          _context3.t0.log.call(_context3.t0, _context3.t1);
-
-                          _context3.t2 = chrome.tabs;
-                          _context3.t3 = tabs[0].id;
-                          _context3.next = 9;
-                          return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('country');
-
-                        case 9:
-                          _context3.t4 = _context3.sent;
-                          _context3.next = 12;
-                          return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('userID');
-
-                        case 12:
-                          _context3.t5 = _context3.sent;
-                          _context3.next = 15;
-                          return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('studyGroup');
-
-                        case 15:
-                          _context3.t6 = _context3.sent;
-                          _context3.t7 = {
-                            action: 'bfc:startSurvey',
-                            lang: _context3.t4,
-                            userID: _context3.t5,
-                            studyGroup: _context3.t6
-                          };
-                          _context3.t8 = {
-                            payload: _context3.t7
-                          };
-
-                          _context3.t2.sendMessage.call(_context3.t2, _context3.t3, _context3.t8);
-
-                        case 19:
+                        case 1:
                         case "end":
-                          return _context3.stop();
+                          return _context2.stop();
                       }
                     }
-                  }, _callee3);
+                  }, _callee2);
                 }));
 
-                return function (_x2) {
-                  return _ref5.apply(this, arguments);
+                return function (_x) {
+                  return _ref4.apply(this, arguments);
                 };
               }());
 
-            case 13:
+            case 5:
             case "end":
-              return _context4.stop();
+              return _context3.stop();
           }
         }
-      }, _callee4);
+      }, _callee3);
+    }))();
+  }, []);
+
+  var startStudy =
+  /*#__PURE__*/
+  function () {
+    var _ref5 = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(e) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
+        while (1) {
+          switch (_context5.prev = _context5.next) {
+            case 0:
+              e.preventDefault(); // prevent if wrong website TODOOOO
+              // update state
+
+              setStudyStatus(1);
+              chrome.tabs.query({
+                active: true,
+                currentWindow: true
+              },
+              /*#__PURE__*/
+              function () {
+                var _ref6 = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
+                /*#__PURE__*/
+                _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(tabs) {
+                  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+                    while (1) {
+                      switch (_context4.prev = _context4.next) {
+                        case 0:
+                          _context4.t0 = chrome.tabs;
+                          _context4.t1 = tabs[0].id;
+                          _context4.next = 4;
+                          return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('country');
+
+                        case 4:
+                          _context4.t2 = _context4.sent;
+                          _context4.next = 7;
+                          return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('userID');
+
+                        case 7:
+                          _context4.t3 = _context4.sent;
+                          _context4.next = 10;
+                          return _storage__WEBPACK_IMPORTED_MODULE_6__["default"].get('studyGroup');
+
+                        case 10:
+                          _context4.t4 = _context4.sent;
+                          _context4.t5 = {
+                            action: 'bfc:startSurvey',
+                            lang: _context4.t2,
+                            userID: _context4.t3,
+                            studyGroup: _context4.t4
+                          };
+                          _context4.t6 = {
+                            payload: _context4.t5
+                          };
+
+                          _context4.t0.sendMessage.call(_context4.t0, _context4.t1, _context4.t6);
+
+                        case 14:
+                        case "end":
+                          return _context4.stop();
+                      }
+                    }
+                  }, _callee4);
+                }));
+
+                return function (_x3) {
+                  return _ref6.apply(this, arguments);
+                };
+              }());
+
+            case 3:
+            case "end":
+              return _context5.stop();
+          }
+        }
+      }, _callee5);
     }));
 
-    return function startStudy(_x) {
-      return _ref4.apply(this, arguments);
+    return function startStudy(_x2) {
+      return _ref5.apply(this, arguments);
     };
   }();
 
@@ -2327,19 +2293,9 @@ function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.module.js");
 /* harmony import */ var _Popup_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Popup/index.js */ "./src/Popup/index.js");
-/* harmony import */ var _Popup_storage_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Popup/storage.js */ "./src/Popup/storage.js");
 
 
-
-Object(preact__WEBPACK_IMPORTED_MODULE_0__["render"])(Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(_Popup_index_js__WEBPACK_IMPORTED_MODULE_1__["default"], null), document.getElementById('app')); // update status when finished test
-
-chrome.runtime.onMessage.addListener(function (request) {
-  if (request.action === 'bfc:studyFinish') {
-    _Popup_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"].set({
-      studyStatus: 2
-    });
-  }
-});
+Object(preact__WEBPACK_IMPORTED_MODULE_0__["render"])(Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(_Popup_index_js__WEBPACK_IMPORTED_MODULE_1__["default"], null), document.getElementById('app'));
 
 /***/ })
 
