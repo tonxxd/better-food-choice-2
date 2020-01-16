@@ -28,7 +28,7 @@ const CartList = props => {
             {props.products.map(p => (
                 <div className="product">
                     <div className="img" style={{background: `url(${p.img})`}} />
-                    <p>{p.name}<br></br><span>{p.price}</span></p>
+                    <p>{p.name} <span>x{p.quantity || 1}</span><br></br><span>{p.price}</span></p>
                     <a href="#" onClick={e => {
                         e.preventDefault()
                         props.removeProduct(p.gtin)
@@ -67,13 +67,16 @@ const Notification = props => {
    
     useEffect(() => {
        
-        if(products.length > props.products.length){
+        const currentAmount = products.length*products.reduce((sum ,p) => sum+p.quantity || 1, 0);
+        const newAmount = props.products.length*props.products.reduce((sum ,p) => sum+p.quantity || 1, 0)
+
+        if( currentAmount> newAmount){
             setMessage("Product Removed!")
             setShowNoti('show')
         }
 
 
-        if(products.length < props.products.length){
+        if(currentAmount < newAmount){
             setMessage("Product Added!")
             setShowNoti('show')
         }
@@ -99,7 +102,17 @@ const CartTemplate = props => {
     const [showCartList, setShowCartList] = useState(false)
 
     const removeProduct = (gtin) => {
-        setProducts(p => p.filter(i => i.gtin !== gtin))
+        // quantity feature
+        
+            setProducts(ps => {
+                const p = ps.filter(p => p.gtin === gtin)[0];
+                if(p.quantity && p.quantity > 1){
+                    return ps.map(pold => pold.gtin === gtin ? {...pold, quantity: (pold.quantity || 1)-1} : pold)
+                }else {
+                    return ps.filter(i => i.gtin !== gtin)
+                }
+            })
+         
     }
 
     // on init set actions for global object
@@ -110,10 +123,22 @@ const CartTemplate = props => {
 
             props.cartClass.addProduct = (p) => {
                 props.cartClass.onAddToCart(p)
-                setProducts(ps => [...ps, p])
+
+
+                // quantity feature
+                setProducts(ps => {
+                        console.log("ACTUAL CART",ps)
+                        if(ps.filter(pold => pold.gtin === p.gtin).length){
+                            return ps.map(pold => pold.gtin === p.gtin ? {...pold, quantity: (pold.quantity || 1) +1} : pold)
+                        }else {
+                            return [...ps, p]
+                        }
+                })
+
+                
             };
             props.cartClass.removeProduct = (gtin) => {
-                props.cartClass.onRemoveFromCart(gtin)
+                props.cartClass.onRemoveFromCart(gtin);
                 removeProduct(gtin)
             }
         })()
@@ -128,7 +153,7 @@ const CartTemplate = props => {
 
     return [
         <Notification products={products} />,
-        <CartButton count={products.length} setShowCartList={setShowCartList}/>,
+        <CartButton count={products.length*products.reduce((sum ,p) => sum+p.quantity || 1, 0)} setShowCartList={setShowCartList}/>,
         <CartList products={products} onFinishStudy={() => props.cartClass.onFinishStudy(products)} showCartList={showCartList} setShowCartList={setShowCartList} removeProduct={removeProduct}/>
     ]
 
