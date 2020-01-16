@@ -99,6 +99,7 @@ const CartTemplate = props => {
 
     // restore cart or []
     const [products, setProducts] = useState([])
+    const [init, setInit] = useState(false)
     const [showCartList, setShowCartList] = useState(false)
 
     const removeProduct = (gtin) => {
@@ -120,7 +121,7 @@ const CartTemplate = props => {
         
         (async()=>{
             setProducts(await Storage.get("bfc:cart") ? JSON.parse(await Storage.get("bfc:cart")) : [])
-
+            setInit(true)
             props.cartClass.addProduct = (p) => {
                 props.cartClass.onAddToCart(p)
 
@@ -147,7 +148,8 @@ const CartTemplate = props => {
 
     // update cart in local storage
     useEffect(()=>{
-        console.log("update memory")
+        if(!init) // prevent override empty cart
+            return
         Storage.set("bfc:cart", JSON.stringify(products))
     },[products])
 
