@@ -3,6 +3,7 @@ import posed from 'react-pose';
 import { useState, useEffect } from 'preact/hooks';
 import './cart.scss';
 import {CartIcon, CloseIcon} from './icons';
+import Storage from '../utils/storage';
 
 
 const CartButton = props => {
@@ -54,8 +55,16 @@ const NotificationEl = posed.div({
 const Notification = props => {
 
     const [message, setMessage] = useState('Product Added!')
-    const [products, setProducts] = useState(localStorage.getItem("bfc:cart") ? JSON.parse(localStorage.getItem("bfc:cart")) : [])
+    const [products, setProducts] = useState([])
     const [showNoti, setShowNoti] = useState('hide')
+   
+    // set default products
+    useEffect(()=>{
+       (async()=>{
+           setProducts(await Storage.get("bfc:cart") ? JSON.parse(await Storage.get("bfc:cart")) : [])
+       })()
+    },[])
+   
     useEffect(() => {
        
         if(products.length > props.products.length){
@@ -86,7 +95,7 @@ const CartTemplate = props => {
 
 
     // restore cart or []
-    const [products, setProducts] = useState(localStorage.getItem("bfc:cart") ? JSON.parse(localStorage.getItem("bfc:cart")) : [])
+    const [products, setProducts] = useState([])
     const [showCartList, setShowCartList] = useState(false)
 
     const removeProduct = (gtin) => {
@@ -95,20 +104,26 @@ const CartTemplate = props => {
 
     // on init set actions for global object
     useEffect(() => {
-        props.cartClass.addProduct = (p) => {
-            props.cartClass.onAddToCart(p)
-            setProducts(ps => [...ps, p])
-        };
-        props.cartClass.removeProduct = (gtin) => {
-            props.cartClass.onRemoveFromCart(gtin)
-            removeProduct(gtin)
-        }
+        
+        (async()=>{
+            setProducts(await Storage.get("bfc:cart") ? JSON.parse(await Storage.get("bfc:cart")) : [])
+
+            props.cartClass.addProduct = (p) => {
+                props.cartClass.onAddToCart(p)
+                setProducts(ps => [...ps, p])
+            };
+            props.cartClass.removeProduct = (gtin) => {
+                props.cartClass.onRemoveFromCart(gtin)
+                removeProduct(gtin)
+            }
+        })()
+        
     }, [])
 
     // update cart in local storage
     useEffect(()=>{
         console.log("update memory")
-        localStorage.setItem("bfc:cart", JSON.stringify(products))
+        Storage.set("bfc:cart", JSON.stringify(products))
     },[products])
 
     return [

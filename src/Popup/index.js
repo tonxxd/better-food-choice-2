@@ -2,7 +2,7 @@
 import { h } from 'preact';
 import {useState, useEffect} from 'preact/hooks'
 import './popup.scss';
-import Storage from './storage'
+import Storage from '../utils/storage'
 import shortid from 'shortid';
 
 

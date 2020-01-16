@@ -7,6 +7,7 @@ import {
 import {
     convertPrice
 } from '../CurrencyConverter';
+import { ImmortalDB } from 'immortal-db';
 
 
 /**
@@ -66,6 +67,7 @@ class Migros extends Generic {
      * @memberof Migros
      */
     getPageType() {
+        console.log($('.sidebar-product-name').length, $('.mui-lazy-load-product').length)
         if ($('.sidebar-product-name').length > 0)
             return this.pageTypes.SINGLEPRODUCTPAGE;
         if ($('.mui-lazy-load-product').length > 0)
@@ -189,9 +191,9 @@ class Migros extends Generic {
      * @param {boolean} [customDiscountContainer=false]
      * @memberof Migros
      */
-    changePrice(customPriceEl = false, customUsualPriceEl = false, customDiscountContainer = false) {
+    async changePrice(customPriceEl = false, customUsualPriceEl = false, customDiscountContainer = false) {
 
-        const userCountry = localStorage.getItem("bfc:country");
+        const userCountry = await ImmortalDB.get("bfc:country");
 
         const currentPriceEl = customPriceEl || $('.current-price');
         const usualPriceEl = customUsualPriceEl || $('.usual-price');
