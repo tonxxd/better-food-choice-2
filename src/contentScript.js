@@ -80,7 +80,7 @@ firebase.initializeApp({
 
       // tracker.trackEvent("finish_study", basket);
 
-      App.showAlert('Thank you!', 'You completed the study', async () => {
+      App.showAlert('Thank you!', 'You completed the study. Pressing close you will be redirected to the final survey', async () => {
         // redirect to survey
         // group
         const group = await Storage.get('bfc:studyGroup');
