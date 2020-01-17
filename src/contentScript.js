@@ -6,6 +6,21 @@ import Tracker from './Tracker';
 import $ from 'jquery';
 import Storage from './utils/storage';
 
+import * as firebase from "firebase/app";
+import 'firebase/functions';
+import 'firebase/analytics'
+
+firebase.initializeApp({
+  apiKey: "AIzaSyBM6HFn1IcCRG5riHOwXfi8gniSKxygnxU",
+  authDomain: "better-food-choices.firebaseapp.com",
+  databaseURL: "https://better-food-choices.firebaseio.com",
+  projectId: "better-food-choices",
+  storageBucket: "better-food-choices.appspot.com",
+  messagingSenderId: "335848923235",
+  appId: "1:335848923235:web:bcfb776fb74a7a22cc9856",
+  measurementId: "G-B6L0MX1MYT"
+});
+
 
 (async () => {
 
@@ -42,11 +57,19 @@ import Storage from './utils/storage';
     window.BetterFoodChoiceCart.render()
 
     // track events
-    window.BetterFoodChoiceCart.onAddToCart = (product) => {
-      tracker.trackEvent("addToCart", product)
+    window.BetterFoodChoiceCart.onAddToCart = async (product) => {
+      tracker.trackEvent("add_to_cart", {
+        quantity: 1,
+        item_category: product.category,
+        item_name: product.name,
+        item_id: product.gtin,
+        price: product.price,
+        currency: await Storage.get("bfc:country") === 'de' ? 'eur' : 'chf'
+      })
     }
+
     window.BetterFoodChoiceCart.onRemoveFromCart = (product) => {
-      tracker.trackEvent("removeFromCart", product)
+      tracker.trackEvent("remove_from_cart", product)
     }
 
     // on finished study
@@ -55,7 +78,7 @@ import Storage from './utils/storage';
       // set finish study
       Storage.set("bfc:studyStatus", 2)
 
-      tracker.trackEvent("finishStudy", basket);
+      tracker.trackEvent("finish_study", basket);
 
       App.showAlert('Thank you!', 'You completed the study', () => {
         $("#bfcCart").remove();
@@ -84,9 +107,6 @@ import Storage from './utils/storage';
       // set study status 
       Storage.set('bfc:studyStatus', 1)
 
-      // set study group
-      Storage.set('bfc:studyGroup', request.payload.studyGroup)
-
 
       const survey = new Survey(request.payload.lang)
       survey.render(async (data) => {
@@ -100,10 +120,11 @@ import Storage from './utils/storage';
 
 
         // send infos to backed
-        tracker.trackSurvey({
-          userID: await Storage.get('bfc:userID'),
-          data
-        })
+        let studyGroup = await tracker.trackEvent('survey', data)
+        console.log(studyGroup)
+        // set study group
+        Storage.set('bfc:studyGroup', studyGroup)
+
 
         // callback when done survey  
         initApp(tracker)

@@ -14,12 +14,12 @@ const Settings = ({goBack}) => {
     useEffect(() => {
         if(!country)
             return
-        Storage.set({country})
+        Storage.set('bfc:country', country)
     },[country])
 
     useEffect(() => {
         (async ()=>{
-            setCountry(await Storage.get('country'))
+            setCountry(await Storage.get('bfc:country'))
         })()
     }, [])
 
@@ -53,23 +53,16 @@ const Popup = () => {
 
 
 
-            if(!await Storage.get('userID')){
+            if(!await Storage.get('bfc:userID')){
                 Storage.set({
-                    userID: shortid.generate(),
-                    country: 'de',
-                    studyGroup: ['A','B'][Math.random()<.5 ? 0 : 1]
+                    'bfc:userID': shortid.generate(),
+                    'bfc:country': 'de',
                 })
             }
 
 
             // ask for updated study status from content script
-            chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {
-                chrome.tabs.sendMessage(tabs[0].id, {payload: {
-                    action: 'bfc:getStudyStatus'
-                }}, res => {
-                    setStudyStatus(parseInt(res) || 0)
-                });
-            })
+            setStudyStatus(parseInt(await Storage.get('bfc:studyStatus')) || 0)
 
         })()
     },[])
@@ -82,13 +75,14 @@ const Popup = () => {
 
         // update state
         setStudyStatus(1);
+        await Storage.set('bfc:studyStatus',1),
 
         chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {            
             chrome.tabs.sendMessage(tabs[0].id, {payload: {
                 action:'bfc:startSurvey',
-                lang: await Storage.get('country'),
-                userID: await Storage.get('userID'),
-                studyGroup: await Storage.get('studyGroup'),
+                lang: await Storage.get('bfc:country'),
+                userID: await Storage.get('bfc:userID'),
+                studyGroup: await Storage.get('bfc:studyGroup'),
             }});
         });
 

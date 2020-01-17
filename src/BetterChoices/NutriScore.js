@@ -167,26 +167,18 @@ export /**
  */
 const displayScore = (score, group, parent, size='big') => {
 
+
     if(!score)
         return
 
-    const images = {
-        A: chrome.runtime.getURL("nsA.png"),
-        B: chrome.runtime.getURL("nsB.png"),
-        C: chrome.runtime.getURL("nsC.png"),
-        D: chrome.runtime.getURL("nsD.png"),
-        E: chrome.runtime.getURL("nsE.png"),
-        V: chrome.runtime.getURL("nsV.png"),
-    }
-
-    // if group B do not render
-    if(group === 'B' && ['C','D','E'].indexOf(score) >= 0)
+    // if group B do not render < B, if group C do no render
+    if((group === 'B' && ['C','D','E'].indexOf(score) >= 0) || group === 'C')
         return;
 
 
     // else render badge
     const img = $('<img />')
-        .attr("src", images[score])
+        .attr("src", chrome.runtime.getURL(`ns${score}.png`))
         .css({
             height: size === 'big' ? 90 : 40,
             zIndex: 10,

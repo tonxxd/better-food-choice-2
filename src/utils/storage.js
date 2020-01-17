@@ -1,6 +1,14 @@
 
 
 class Storage {
+
+    static async clear(){
+        return new Promise(res => {
+            chrome.storage.sync.clear(() => {
+                res();  
+            });
+        })
+    }
     static async get(key){
         return new Promise(res => {
             chrome.storage.sync.get([key], result => {

@@ -8,6 +8,7 @@ import {
     settings
 } from "../config";
 import $ from "jquery";
+import Storage from "../utils/storage";
 
 
 class BetterFoodChoice {
@@ -71,12 +72,13 @@ class BetterFoodChoice {
                     addToCartButton.off("click") // delete events
 
                     // listen to click
-                    addToCartButton.on("click", (e) => {
+                    addToCartButton.on("click", async (e) => {
                         e.stopPropagation()
                         e.preventDefault();
 
                         //Add to cart
                         window.BetterFoodChoiceCart.addProduct({
+                            currency: await Storage.get("bfc:country") === 'de' ? 'eur' : 'chf',
                             gtin: GTIN,
                             ...this.store.getProductData(),
                             nutriScore: nutri_score_final
@@ -115,6 +117,7 @@ class BetterFoodChoice {
 
                         // scrape urls in small batches to improve performances and prevent abuse
                         scraper.scrapeBatch(toScrape, (urlsSlice, bodies) => {
+                            
 
                             let nutriscores = [];
                             // calculate score
@@ -143,12 +146,13 @@ class BetterFoodChoice {
                                 addToCartButton.off('click');
 
                                 // listen to click
-                                addToCartButton.on("click", (e) => {
+                                addToCartButton.on("click", async (e) => {
                                     e.stopPropagation()
                                     e.preventDefault();
 
                                     //Add to cart
                                     window.BetterFoodChoiceCart.addProduct({
+                                        currency: await Storage.get("bfc:country") === 'de' ? 'eur' : 'chf',
                                         gtin: this.store.getGTIN(bodies[i]),
                                         ...this.store.getProductData(bodies[i]),
                                         nutriScore: nutriscores[i]

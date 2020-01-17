@@ -21,23 +21,38 @@ const CartListWrapper = posed.div({
 })
 const CartList = props => {
     console.log(props.products)
+
+    const [group, setGroup] = useState('C')
+
+    useEffect(()=> {(async()=>{
+        setGroup(await Storage.get("bfc:studyGroup"))
+    })()}, [])
+
+    console.log(group)
+
     return (
         <CartListWrapper id="bfcCartList" pose={props.showCartList ? 'show' : 'hide'} initialPose="hide">
             <span className="closeSide" onClick={e => props.setShowCartList(false)} ><CloseIcon color={"rgba(0,0,0,.3)"} /></span>
             <h1>Cart</h1>
-            {props.products.map(p => (
-                <div className="product">
-                    <div className="img" style={{background: `url(${p.img})`}} />
-                    <p>{p.name} <span>x{p.quantity || 1}</span><br></br><span>{p.price}</span></p>
-                    <a href="#" onClick={e => {
-                        e.preventDefault()
-                        props.removeProduct(p.gtin)
-                    }}><CloseIcon  color={"white"}/></a>
-                </div>
-            ))}
-            {props.products.length === 0 && <p>No products yet</p>}
+            <div className="cartInner">
+                {props.products.map(p => (
+                    <div className="product">
+                        <div className="img" style={{background: `url(${p.img})`}} />
+                        <p>
+                            {p.name} <span>x{p.quantity || 1}</span>
+                            <span>{p.currency} {p.price}</span>
+                            {((group === 'A') || (group == 'B' && ['C','D','E'].indexOf(p.nutriScore) === -1)) && <img src={chrome.runtime.getURL(`ns${p.nutriScore}.png`)} />}
+                        </p>
+                        <a href="#" onClick={e => {
+                            e.preventDefault()
+                            props.removeProduct(p.gtin)
+                        }}><CloseIcon  color={"white"}/></a>
+                    </div>
+                ))}
+                {props.products.length === 0 && <p>No products yet</p>}
+            </div>
             <div className="listFooter">
-                <p className="tot">Tot: <span>{Math.round(props.products.reduce((sum, a)=> sum+parseFloat(a.price), 0)*100)/100}</span></p>
+                <p className="tot">Tot: <span>{(props.products[0] || {}).currency || 'chf'} {Math.round(props.products.reduce((sum, a)=> sum+(parseFloat(a.price) *(a.quantity||1)), 0)*100)/100}</span></p>
                 <button className="button" onClick={e => {
                     props.setShowCartList(false)
                     setTimeout(props.onFinishStudy, 800)
@@ -67,8 +82,8 @@ const Notification = props => {
    
     useEffect(() => {
        
-        const currentAmount = products.length*products.reduce((sum ,p) => sum+p.quantity || 1, 0);
-        const newAmount = props.products.length*props.products.reduce((sum ,p) => sum+p.quantity || 1, 0)
+        const currentAmount = products.reduce((sum ,p) => sum+(p.quantity || 1), 0);
+        const newAmount = props.products.reduce((sum ,p) => sum+(p.quantity || 1), 0)
 
         if( currentAmount> newAmount){
             setMessage("Product Removed!")
@@ -155,7 +170,7 @@ const CartTemplate = props => {
 
     return [
         <Notification products={products} />,
-        <CartButton count={products.length*products.reduce((sum ,p) => sum+p.quantity || 1, 0)} setShowCartList={setShowCartList}/>,
+        <CartButton count={products.reduce((sum ,p) => sum+(p.quantity || 1), 0)} setShowCartList={setShowCartList}/>,
         <CartList products={products} onFinishStudy={() => props.cartClass.onFinishStudy(products)} showCartList={showCartList} setShowCartList={setShowCartList} removeProduct={removeProduct}/>
     ]
 

@@ -67,11 +67,11 @@ class Migros extends Generic {
      * @memberof Migros
      */
     getPageType() {
-        console.log($('.sidebar-product-name').length, $('.mui-lazy-load-product').length)
-        if ($('.sidebar-product-name').length > 0)
-            return this.pageTypes.SINGLEPRODUCTPAGE;
         if ($('.mui-lazy-load-product').length > 0)
             return this.pageTypes.PRODUCTOVERVIEWPAGE;
+ 
+        if ($('.sidebar-product-name').length > 0)
+            return this.pageTypes.SINGLEPRODUCTPAGE;
 
         return this.pageTypes.UNKNOWN;
     }
@@ -279,15 +279,15 @@ class Migros extends Generic {
         const sodium = multiply(getValue('Salz'), .4).toNumber('g') > getValue('Natrium').toNumber('g') ? multiply(getValue('Salz'), .4) : getValue('Natrium');
 
         // TO ASK WHY FRUIT 0
-        console.log({
-            energy,
-            acids,
-            sugar,
-            fibers,
-            protein,
-            sodium,
-            fruitvegetables
-        })
+        // console.log({
+        //     energy,
+        //     acids,
+        //     sugar,
+        //     fibers,
+        //     protein,
+        //     sodium,
+        //     fruitvegetables
+        // })
         return {
             energy,
             acids,
@@ -319,6 +319,7 @@ class Migros extends Generic {
     getProductData(customBody = false){
         const $body = $(customBody || document);
         return {
+            category: this.getProductCategory(customBody),
             name: $body.find('.sidebar-product-name').first().text(),
             price: $body.find('.current-price').first().text(),
             img: $body.find('.product-stage-slider-image').first().attr("data-src")
