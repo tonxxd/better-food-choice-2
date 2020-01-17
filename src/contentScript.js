@@ -76,9 +76,9 @@ firebase.initializeApp({
     window.BetterFoodChoiceCart.onFinishStudy = async (basket) => {
 
       // set finish study
-      // Storage.set("bfc:studyStatus", 2)
+      Storage.set("bfc:studyStatus", 2)
 
-      // tracker.trackEvent("finish_study", basket);
+      tracker.trackEvent("finish_study", basket);
 
       App.showAlert('Thank you!', 'You completed the study. Pressing close you will be redirected to the final survey', async () => {
         // redirect to survey
@@ -92,7 +92,7 @@ firebase.initializeApp({
           case 'B': q = country == 'de' ? 'PQDET' : 'PQCHT'; break;
           case 'C': q = country == 'de' ? 'PQDEC' : 'PQCHC'; break;
         }
-        console.log(`https://www.soscisurvey.de/NUS_1/?r=${userID}&q=${q}`)
+
         window.location.href = `https://www.soscisurvey.de/NUS_1/?r=${userID}&q=${q}`
         $("#bfcCart").remove();
       })
