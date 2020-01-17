@@ -349,6 +349,7 @@ class Migros extends Generic {
         // Category Overview Page
         $(`
             .js-banner-1,
+            .discount-stage,
             .js-banner-2,
             .bg-wooden,
             .mui-share-buttons,
@@ -357,6 +358,8 @@ class Migros extends Generic {
             .sidebar-teaser,
             .sidebar-retailer,
             .retailer-tabs,
+            #gopt-related-products,
+            .container-fluid.is-relative.is-overflow-hidden.is-bg-cover-center-right.bg.is-inverted.is-overlapping-product-trigger,
             .mui-teaser-picture-desktop,
             .js-no-preferred-store,
             .mui-favorite-button ,
