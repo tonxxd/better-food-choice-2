@@ -76,11 +76,23 @@ firebase.initializeApp({
     window.BetterFoodChoiceCart.onFinishStudy = async (basket) => {
 
       // set finish study
-      Storage.set("bfc:studyStatus", 2)
+      // Storage.set("bfc:studyStatus", 2)
 
-      tracker.trackEvent("finish_study", basket);
+      // tracker.trackEvent("finish_study", basket);
 
-      App.showAlert('Thank you!', 'You completed the study', () => {
+      App.showAlert('Thank you!', 'You completed the study', async () => {
+        // redirect to survey
+        // group
+        const group = await Storage.get('bfc:studyGroup');
+        const country = await Storage.get('bfc:country');
+        let q = '';
+        switch(group){
+          case 'A': q = country == 'de' ? 'PQDET2' : 'PQCHT2'; break;
+          case 'B': q = country == 'de' ? 'PQDET' : 'PQCHT'; break;
+          case 'B': q = country == 'de' ? 'PQDEC' : 'PQCHC'; break;
+        }
+        console.log(`https://www.soscisurvey.de/NUS_1/?r=${group}&q=${q}`)
+        window.location.href = `https://www.soscisurvey.de/NUS_1/?r=${group}&q=${q}`
         $("#bfcCart").remove();
       })
 
