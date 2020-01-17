@@ -93,7 +93,7 @@ firebase.initializeApp({
           case 'C': q = country == 'de' ? 'PQDEC' : 'PQCHC'; break;
         }
         console.log(`https://www.soscisurvey.de/NUS_1/?r=${userID}&q=${q}`)
-        // window.location.href = `https://www.soscisurvey.de/NUS_1/?r=${userID}&q=${q}`
+        window.location.href = `https://www.soscisurvey.de/NUS_1/?r=${userID}&q=${q}`
         $("#bfcCart").remove();
       })
 
