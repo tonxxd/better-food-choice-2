@@ -33,7 +33,7 @@ const Survey = (props) => {
 
     const [step, setStep] = useState(0);
     const [showModal, setShowModal] = useState(false)
-    const [lang, setLang] = useState(props.lang)
+    const [country, setCountry] = useState(props.country)
 
     useEffect(() => {
         setShowModal(true)
@@ -96,7 +96,7 @@ const Survey = (props) => {
                         // send data to main handler
                         props.callback({
                             ...values,
-                            lang
+                            country
                         });
                         setShowModal(false)
                     }}
@@ -128,6 +128,7 @@ const Survey = (props) => {
             
                                     <p>Nochmals vielen Dank!</p>
                                     <p>Klaus Fuchs (Projektleitung)<br></br>Prof. Dr. Verena Tiefenbeck<br></br>Jie Lian<br></br>Leonard Michels<br></br>Mehdi Bouguerra</p>
+                                    <FieldOptions name={'country'} options={['Germany','Switzerland']} setFieldValue={(e,i) => setCountry(['de','ch'][i])} value={['de','ch'].indexOf(country)}/>                                    
                                     <a className={'next'} onClick={e => setStep(s => s+1)}>Next</a>
                                 </div>
                             
@@ -135,7 +136,7 @@ const Survey = (props) => {
                             {step == 1 && <Step  key={1} className={'step'}>
                                 <h1>Intro Survey</h1>
                                 {
-                                    questions[lang].map(q => (
+                                    questions[country].map(q => (
                                         <div className="question">
                                             <h2>Wie alt sind Sie?</h2>
                                             {q.options ? <FieldOptions name={q.name} options={q.options} setFieldValue={setFieldValue} value={values[q.name]}/> : <Field placeholder={q.placeholder} className={'input'} type="text" name={q.name}/>}

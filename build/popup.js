@@ -2138,13 +2138,7 @@ var Popup = function Popup() {
     "class": "title"
   }, "Better Food Choices"), Object(preact__WEBPACK_IMPORTED_MODULE_3__["h"])("h2", {
     "class": "subtitle"
-  }, "Study"), Object(preact__WEBPACK_IMPORTED_MODULE_3__["h"])("a", {
-    href: "#",
-    onClick: function onClick(e) {
-      return setPage('settings');
-    },
-    "class": "has-text-dark is-size-6 settings"
-  }, "Settings"), studyStatus === 0 && Object(preact__WEBPACK_IMPORTED_MODULE_3__["h"])("button", {
+  }, "Study"), studyStatus === 0 && Object(preact__WEBPACK_IMPORTED_MODULE_3__["h"])("button", {
     "class": "button is-primary",
     onClick: startStudy
   }, "Start study"), studyStatus === 1 && Object(preact__WEBPACK_IMPORTED_MODULE_3__["h"])("p", null, "Go on and start shopping!"), studyStatus === 2 && Object(preact__WEBPACK_IMPORTED_MODULE_3__["h"])("p", null, "Study finished, thank you!")), page == 'settings' && Object(preact__WEBPACK_IMPORTED_MODULE_3__["h"])(Settings, {

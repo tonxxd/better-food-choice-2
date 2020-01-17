@@ -85,14 +85,15 @@ firebase.initializeApp({
         // group
         const group = await Storage.get('bfc:studyGroup');
         const country = await Storage.get('bfc:country');
+        const userID = await Storage.get('bfc:userID')
         let q = '';
         switch(group){
           case 'A': q = country == 'de' ? 'PQDET2' : 'PQCHT2'; break;
           case 'B': q = country == 'de' ? 'PQDET' : 'PQCHT'; break;
-          case 'B': q = country == 'de' ? 'PQDEC' : 'PQCHC'; break;
+          case 'C': q = country == 'de' ? 'PQDEC' : 'PQCHC'; break;
         }
-        console.log(`https://www.soscisurvey.de/NUS_1/?r=${group}&q=${q}`)
-        window.location.href = `https://www.soscisurvey.de/NUS_1/?r=${group}&q=${q}`
+        console.log(`https://www.soscisurvey.de/NUS_1/?r=${userID}&q=${q}`)
+        // window.location.href = `https://www.soscisurvey.de/NUS_1/?r=${userID}&q=${q}`
         $("#bfcCart").remove();
       })
 
@@ -124,7 +125,7 @@ firebase.initializeApp({
       survey.render(async (data) => {
 
         // language change
-        Storage.set("bfc:country", data.lang)
+        Storage.set("bfc:country", data.country)
         // TODOOO send changed lang to extension 
 
         // init tracker

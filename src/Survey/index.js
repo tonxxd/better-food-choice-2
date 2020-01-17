@@ -3,15 +3,15 @@ import { h, render } from "preact";
 import SurveyTemplate from './SurveyTemplate';
 class Survey {
 
-    constructor(lang){
-        this.lang = lang
+    constructor(country){
+        this.country = country
     }
 
     render(callback){
         const parent = document.createElement('div');
         parent.id = "bfcSurveyEl"
         document.body.appendChild(parent);
-        render(<SurveyTemplate callback={callback} lang={this.lang} />, parent)
+        render(<SurveyTemplate callback={callback} country={this.country} />, parent)
     }
 
 }
