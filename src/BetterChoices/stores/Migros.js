@@ -8,6 +8,7 @@ import {
     convertPrice
 } from '../CurrencyConverter';
 import { ImmortalDB } from 'immortal-db';
+import { settings } from '../../config';
 
 
 /**
@@ -212,7 +213,7 @@ class Migros extends Generic {
         usualPrice_chf = parseFloat(usualPrice_chf)
 
         // discount
-        if (usualPrice_chf) {
+        if (usualPrice_chf && settings.showDiscount) {
             const usualPrice_eur = convertPrice(usualPrice_chf);
             const percent = ((1 - currentPrice_chf / usualPrice_chf) * 100).toFixed(0);
 
@@ -235,6 +236,9 @@ class Migros extends Generic {
                     transform: "rotate(-5deg)"
                 }).text(percent + '%')
             )
+        }else{
+            discountContainer.html("")
+            usualPriceEl.text("")
         }
     }
 
