@@ -14,5 +14,8 @@ export const API = {
 export const settings = {
     overviewBatchSize: 3,
 
-    disableApi: false
+    disableApi: false,
+
+    defaultGroup: 'C',
+    maxBudget: {eur: 5, chf: 200}
 }

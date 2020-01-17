@@ -4,6 +4,7 @@ import { useState, useEffect } from 'preact/hooks';
 import './cart.scss';
 import {CartIcon, CloseIcon} from './icons';
 import Storage from '../utils/storage';
+import { settings } from '../config';
 
 
 const CartButton = props => {
@@ -28,7 +29,7 @@ const CartList = props => {
         setGroup(await Storage.get("bfc:studyGroup"))
     })()}, [])
 
-    console.log(group)
+    const total = Math.round(props.products.reduce((sum, a)=> sum+(parseFloat(a.price) *(a.quantity||1)), 0)*100)/100;
 
     return (
         <CartListWrapper id="bfcCartList" pose={props.showCartList ? 'show' : 'hide'} initialPose="hide">
@@ -52,8 +53,14 @@ const CartList = props => {
                 {props.products.length === 0 && <p>No products yet</p>}
             </div>
             <div className="listFooter">
-                <p className="tot">Tot: <span>{(props.products[0] || {}).currency || 'chf'} {Math.round(props.products.reduce((sum, a)=> sum+(parseFloat(a.price) *(a.quantity||1)), 0)*100)/100}</span></p>
+                <p className="tot">Tot: <span>{(props.products[0] || {}).currency || 'chf'} {total}</span></p>
                 <button className="button" onClick={e => {
+                    // return if over budget
+                    console.log(total, props.products[0].currency, settings.maxBudget[props.products[0].currency])
+                    if(total > settings.maxBudget[props.products[0].currency]){
+                        alert(`Over budget! (max: ${props.products[0].currency}${settings.maxBudget[props.products[0].currency]})`);
+                        return
+                    }
                     props.setShowCartList(false)
                     setTimeout(props.onFinishStudy, 800)
                 }}>Finish study</button>
