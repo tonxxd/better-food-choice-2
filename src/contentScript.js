@@ -35,15 +35,17 @@ firebase.initializeApp({
    */
   const initApp = async (tracker) => {
 
-    if(!tracker) tracker = new Tracker(await Storage.get("bfc:userID"));
 
     console.log("INIT Better Food Choices Extension")
 
+    // check region
+
     // track page
-    tracker.trackPage()
+    if(!tracker) tracker = new Tracker(await Storage.get("bfc:userID"));
+    
 
     // init main plugin class
-    const App = new BetterFoodChoice();
+    const App = new BetterFoodChoice(tracker);
     App.init(await Storage.get("bfc:studyGroup"));
 
     console.log(await Storage.get("bfc:studyGroup"), await Storage.get("bfc:studyStatus"))
@@ -58,18 +60,17 @@ firebase.initializeApp({
 
     // track events
     window.BetterFoodChoiceCart.onAddToCart = async (product) => {
-      tracker.trackEvent("add_to_cart", {
-        quantity: 1,
-        item_category: product.category,
-        item_name: product.name,
-        item_id: product.gtin,
-        price: product.price,
-        currency: await Storage.get("bfc:country") === 'de' ? 'eur' : 'chf'
+      tracker.trackEvent("track_cart", {
+        add_remove: 'add',
+        product
       })
     }
 
     window.BetterFoodChoiceCart.onRemoveFromCart = (product) => {
-      tracker.trackEvent("remove_from_cart", product)
+      tracker.trackEvent("track_cart", {
+        add_remove: 'remove',
+        product
+      })
     }
 
     // on finished study

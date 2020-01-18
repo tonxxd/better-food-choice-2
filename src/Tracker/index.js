@@ -1,49 +1,64 @@
 import Axios from "axios"
-import { API } from "../config"
+import {
+    API
+} from "../config"
 import * as firebase from "firebase/app";
 import Storage from "../utils/storage";
+import $ from 'jquery'
 
 class Tracker {
-    constructor(userID){
+    constructor(userID) {
 
-        this.userID = userID
+        this.userID = userID;
+
+        window.addEventListener('beforeunload', ()=>{
+            if (this.currentPage) {
+                const end = new Date();
+                this.trackEvent('track_page', {
+                    timeSpent: end - this.currentPage.start,
+                    pageUrl: this.currentPage.url,
+                    category: this.currentPage.category,
+                    title: this.currentPage.title
+                })
+            }
+        });
 
     }
 
-    trackPage(){
-        // const info = {
-        //     action: 'page',
-        //     timestamp: new Date().getTime(),
-        //     pageTitle: document.title,
-        //     pageUrl: window.location.href,
-        //     userID: this.userID
-        // }
-
-        // Axios.post(API.trackingEndPoint, info)
-
-        // TODO send data
+    async stop(){
+        const end = new Date();
+        this.trackEvent('track_page', {
+            timeSpent: end - this.currentPage.start,
+            pageUrl: this.currentPage.url,
+            category: this.currentPage.category,
+            title: this.currentPage.title
+        })
+        this.currentPage = false 
     }
 
-    trackSurvey(data){
-        console.log("track survey", data)
-        // let {data} = Axios.post(API.trackingEndPoint, {
-        //     action: 'survey',
-        //     ...data
-        // });
-        // return data.group
+
+
+    async trackPage(category, url, title, gtin = false) {
+        const start = new Date();
+        this.currentPage = {
+            start,
+            category,
+            url,
+            gtin,
+            title
+        }
     }
 
-    async trackEvent(action, value){
-        firebase.analytics().logEvent(name, value)
-        console.log("track event", action, value)
-        let {data} = await Axios.post(API.trackingEndPoint, {
+    async trackEvent(action, value) {
+        let {
+            data
+        } = await Axios.post(API.trackingEndPoint, {
             action,
             userID: await Storage.get('bfc:userID'),
             value
         });
-        console.log(data)
 
-        if(action === 'survey')
+        if (action === 'survey')
             return data // chosen group
     }
 }

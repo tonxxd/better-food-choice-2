@@ -33,6 +33,9 @@ class Migros extends Generic {
             UNKNOWN: 'migros.unknown'
         }
 
+        this.region = 'gmos';
+        this.regionCookieName = 'm-product-region-temporary-cooperative'
+
     }
 
     /**
@@ -75,6 +78,16 @@ class Migros extends Generic {
             return this.pageTypes.SINGLEPRODUCTPAGE;
 
         return this.pageTypes.UNKNOWN;
+    }
+
+    getPageCategory(){
+        const type = this.getPageType();
+        switch(type){
+            case this.pageTypes.PRODUCTOVERVIEWPAGE:
+                return $(".category-browser-category.is-current.supermarket").first().text();
+            case this.pageTypes.SINGLEPRODUCTPAGE:
+                return this.getProductCategory();
+        }
     }
 
 
@@ -352,6 +365,7 @@ class Migros extends Generic {
             .discount-stage,
             .js-banner-2,
             .bg-wooden,
+            .filter-list.js-boolean-filters,
             .mui-share-buttons,
             .mui-footer-list-container,
             .mui-footer-link-area,

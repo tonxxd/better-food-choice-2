@@ -6,6 +6,7 @@ export const API = {
     password: 'yJFbbHtCPTFyy8GB',
 
     trackingEndPoint: `https://us-central1-better-food-choices.cloudfunctions.net/bfc/track`,
+    // trackingEndPoint: `http://localhost:5001/better-food-choices/us-central1/bfc/track`,
 
     endpoint: gtin => `https://eatfit-service.foodcoa.ch/products/${gtin}/?resultType=array`,
 

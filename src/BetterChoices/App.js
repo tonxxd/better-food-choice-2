@@ -9,11 +9,14 @@ import {
 } from "../config";
 import $ from "jquery";
 import Storage from "../utils/storage";
+import { getCookie, setCookie } from "../utils/cookies";
 
 
 class BetterFoodChoice {
-    constructor() {
+    constructor(tracker) {
 
+
+        this.tracker = tracker;
 
         // detect store
         this.getStore();
@@ -32,8 +35,17 @@ class BetterFoodChoice {
             // delete ads
             this.store.clean();
 
+            // check region
+            if(getCookie(this.store.regionCookieName) !== this.store.region){
+                setCookie(this.store.regionCookieName, this.store.region);
+                window.location.reload()
+            }
+
             // action based on page
             const pageType = this.store.getPageType();
+
+            // track page
+            this.trackPage()
 
             switch (pageType) {
                 case this.store.pageTypes.SINGLEPRODUCTPAGE: // single product
@@ -252,6 +264,14 @@ class BetterFoodChoice {
 
         $("body").append($alertWrapper.append($alert.append($h1, $p, $action)));
 
+    }
+
+    trackPage(){
+        this.tracker.trackPage(this.store.getPageCategory(), window.location.href, $("title").text(), this.store.getGTIN());
+        window.onhashchange = function() { 
+            this.tracker.stop()
+            this.tracker.trackPage(this.store.getPageCategory(), window.location.href, $("title").text(), this.store.getGTIN());
+        }
     }
 
 }
