@@ -53,6 +53,7 @@ const CartList = props => {
                 {props.products.length === 0 && <p>No products yet</p>}
             </div>
             <div className="listFooter">
+                <div className="innerFooter">
                 <p className="tot">Tot: <span>{(props.products[0] || {}).currency || 'chf'} {total}</span></p>
                 <button className="button" onClick={e => {
                     // return if over budget
@@ -64,6 +65,8 @@ const CartList = props => {
                     props.setShowCartList(false)
                     setTimeout(props.onFinishStudy, 800)
                 }}>Finish study</button>
+                </div>
+                <div>Budget: {(props.products[0] || {}).currency || 'chf'} {settings.maxBudget[(props.products[0] || {}).currency || 'chf']}</div>
             </div>
         </CartListWrapper>
     )
@@ -150,7 +153,6 @@ const CartTemplate = props => {
 
                 // quantity feature
                 setProducts(ps => {
-                        console.log("ACTUAL CART",ps)
                         if(ps.filter(pold => pold.gtin === p.gtin).length){
                             return ps.map(pold => pold.gtin === p.gtin ? {...pold, quantity: (pold.quantity || 1) +1} : pold)
                         }else {

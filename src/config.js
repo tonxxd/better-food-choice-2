@@ -5,7 +5,7 @@ export const API = {
     username: 'eatfit_student_dominic',
     password: 'yJFbbHtCPTFyy8GB',
 
-    trackingEndPoint: `https://us-central1-better-food-choices.cloudfunctions.net/bfc/track`,
+    trackingEndPoint: `https://us-central1-ecommercewidget-265813.cloudfunctions.net/bfc/track`,
     // trackingEndPoint: `http://localhost:5001/better-food-choices/us-central1/bfc/track`,
 
     endpoint: gtin => `https://eatfit-service.foodcoa.ch/products/${gtin}/?resultType=array`,
@@ -18,6 +18,6 @@ export const settings = {
     disableApi: false,
 
     defaultGroup: 'C',
-    maxBudget: {eur: 5, chf: 200},
+    maxBudget: {eur: 5, chf: 5},
     showDiscount: false
 }

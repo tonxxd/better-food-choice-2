@@ -6,10 +6,19 @@ import {
 } from 'mathjs'
 import {
     convertPrice
-} from '../CurrencyConverter';
-import { ImmortalDB } from 'immortal-db';
-import { settings } from '../../config';
-
+} from '../CurrencyConverter/index';
+import {
+    settings
+} from '../../config';
+import {
+    getCookie,
+    setCookie
+} from '../../utils/cookies';
+import {
+    indexOfMany
+} from '../../utils';
+import pageCategoriesJSON from './data/pageCategories.json'
+import Storage from '../../utils/storage';
 
 /**
  *
@@ -33,8 +42,6 @@ class Migros extends Generic {
             UNKNOWN: 'migros.unknown'
         }
 
-        this.region = 'gmos';
-        this.regionCookieName = 'm-product-region-temporary-cooperative'
 
     }
 
@@ -49,6 +56,34 @@ class Migros extends Generic {
         return $("body").find(".mui-product-tile").filter(function () {
             return $(this).attr("href") == u;
         }).first()
+    }
+
+    setDefaultRegion() {
+        // check region
+        if (getCookie('m-product-region-temporary-cooperative') !== 'gmos') {
+            setCookie('m-product-region-temporary-cooperative', 'gmos');
+            window.location.reload()
+        }
+    }
+
+    setDefaultOrdering() {
+        // delete options
+        const select = $(".mui-form-control-select.mui-form-control-select-simple.js-sort-articles-select");
+        select.find("option")
+            .filter(function () {
+                return $(this).attr("value").indexOf('price') > -1 ? true : false;
+            }).remove();
+
+        // set default rank
+        if (select.length) {
+            const rightOptionValue = select.find("option")
+                .filter(function () {
+                    return $(this).attr("value").indexOf('name_asc') > -1 ? true : false;
+                }).attr("option")
+            select.val(rightOptionValue);
+            // trigger change
+            select.change()
+        }
     }
 
     /**
@@ -73,18 +108,24 @@ class Migros extends Generic {
     getPageType() {
         if ($('.mui-lazy-load-product').length > 0)
             return this.pageTypes.PRODUCTOVERVIEWPAGE;
- 
+
         if ($('.sidebar-product-name').length > 0)
             return this.pageTypes.SINGLEPRODUCTPAGE;
 
         return this.pageTypes.UNKNOWN;
     }
 
-    getPageCategory(){
+    getPageCategory() {
         const type = this.getPageType();
-        switch(type){
+        switch (type) {
             case this.pageTypes.PRODUCTOVERVIEWPAGE:
-                return $(".category-browser-category.is-current.supermarket").first().text();
+                for (let [key, value] of Object.entries(pageCategoriesJSON)) {
+                    for (let u of value) {
+                        if (window.location.href.indexOf(u) > -1)
+                            return key
+                    }
+                };
+                return 'other'
             case this.pageTypes.SINGLEPRODUCTPAGE:
                 return this.getProductCategory();
         }
@@ -104,7 +145,7 @@ class Migros extends Generic {
             return $(this).prev().text() === 'GTIN'
         }).first().text().split(",")[0])
 
-        if(!this.products[GTIN])
+        if (!this.products[GTIN])
             this.products[GTIN] = {};
 
         return GTIN
@@ -130,6 +171,18 @@ class Migros extends Generic {
         return this.products[GTIN].categoryString
     }
 
+    getCategoryStringLinks(customBody = false) {
+        const GTIN = this.getGTIN(customBody);
+        if (!this.products[GTIN].categoryStringLinks) {
+            this.products[GTIN].categoryStringLinks = $(".mui-breadcrumb-link").map(function () {
+                return $.trim($(this).attr("href"))
+            }).get().reduce((a, b) => {
+                return a + ' ' + b;
+            }).toLowerCase()
+        }
+        return this.products[GTIN].categoryStringLinks
+    }
+
 
     /**
      * retrieve category from category string
@@ -142,19 +195,44 @@ class Migros extends Generic {
         const GTIN = this.getGTIN(customBody);
         const cat = this.getCategoryString(customBody);
 
+        if (!indexOfMany(cat, ['alimentari', 'lebensmittel', 'denrées alimentaires'])) {
+            return 'unknown';
+        }
 
-        if (cat.indexOf('mineralwasser') >= 0)
+        if (indexOfMany(cat, ['acqua minerale', 'mineralwasser', 'eau minérale']))
             this.products[GTIN].category = 'water';
-        else if (cat.indexOf('getränke heiss & kalt') >= 0)
-            this.products[GTIN].category = 'drink';
-        else if (cat.indexOf('joghurt & joghurtdrinks') >= 0)
-            this.products[GTIN].category = 'joghurt';
-        else if (cat.indexOf('käse') >= 0)
-            this.products[GTIN].category = 'cheese';
-        else if (cat.indexOf('lebensmittel') >= 0)
-            this.products[GTIN].category = 'food'
 
-        return this.products[GTIN].category || 'unknown';
+        else if (indexOfMany(cat, ['getränke heiss & kalt', 'bevande calde e fredde', 'boissons chaudes & froides']))
+            this.products[GTIN].category = 'drink';
+
+        else if (indexOfMany(cat, ['käse', 'fromages', 'formaggi']))
+            this.products[GTIN].category = 'cheese';
+
+        else if (indexOfMany(cat, ['latticini e uova', 'milchprodukte & eier', 'produits laitiers & œufs']))
+            this.products[GTIN].category = 'milk, cheese, eggs';
+
+        else if (indexOfMany(cat, ['viande', 'carne', 'fleisch']))
+            this.products[GTIN].category = 'meat';
+
+        else if (indexOfMany(cat, ['fisch & meeresfrüchte', 'poisson & fruits de mer', 'pesce e frutti di mare']))
+            this.products[GTIN].category = 'fish';
+
+        else {
+            let abort = false;
+            const links = this.getCategoryStringLinks(customBody);
+            // check links
+            for (let [key, values] of Object.entries(pageCategoriesJSON)) {
+                for (let c of values) {
+                    if (links.indexOf(c) > -1 && !abort) {
+                        this.products[GTIN].category = key;
+                        abort = true;
+                    }
+                }
+            }
+        }
+
+
+        return this.products[GTIN].category || 'food'
     }
 
     /**
@@ -182,14 +260,15 @@ class Migros extends Generic {
             $this.changePrice(
                 $(this).find(".mui-product-tile-price"),
                 $(this).find('.mui-product-tile-original-price'),
-                $(this).find('.mui-product-tile-discount-image-container')
+                $(this).find('.mui-product-tile-discount-image-container'),
+                $this.getPageCategory()
             )
             $(this).addClass('updatedBetterFoodChoice')
         })
     }
 
-    getAddToCartButton(element){
-        if(!element)
+    getAddToCartButton(element) {
+        if (!element)
             return $(".sidebar-product-information").find(".mui-shoppinglist-add").first()
         return element.find('.mui-shoppinglist-button-add')
     }
@@ -205,9 +284,9 @@ class Migros extends Generic {
      * @param {boolean} [customDiscountContainer=false]
      * @memberof Migros
      */
-    async changePrice(customPriceEl = false, customUsualPriceEl = false, customDiscountContainer = false) {
+    async changePrice(customPriceEl = false, customUsualPriceEl = false, customDiscountContainer = false, category) {
 
-        const userCountry = await ImmortalDB.get("bfc:country");
+        const userCountry = await Storage.get("bfc:country");
 
         const currentPriceEl = customPriceEl || $('.current-price');
         const usualPriceEl = customUsualPriceEl || $('.usual-price');
@@ -215,9 +294,8 @@ class Migros extends Generic {
 
         let currentPrice_chf = currentPriceEl.text().replace('.-', '').replace('-', '').trim();
         currentPrice_chf = parseFloat(currentPrice_chf);
-        currentPrice_chf = ((currentPrice_chf * 10).toFixed(0) / 10).toFixed(2);
 
-        const currentPrice_eur = convertPrice(currentPrice_chf)
+        const currentPrice_eur = convertPrice(currentPrice_chf, category)
 
         if (userCountry === 'de')
             currentPriceEl.text('€ ' + currentPrice_eur)
@@ -225,9 +303,11 @@ class Migros extends Generic {
         let usualPrice_chf = usualPriceEl.text().replace('.-', '').replace('-', '').replace('statt', '').trim();
         usualPrice_chf = parseFloat(usualPrice_chf)
 
+        console.log(currentPrice_eur, currentPrice_chf, category, userCountry)
+
         // discount
         if (usualPrice_chf && settings.showDiscount) {
-            const usualPrice_eur = convertPrice(usualPrice_chf);
+            const usualPrice_eur = convertPrice(usualPrice_chf, category);
             const percent = ((1 - currentPrice_chf / usualPrice_chf) * 100).toFixed(0);
 
             if (userCountry == 'de')
@@ -249,7 +329,7 @@ class Migros extends Generic {
                     transform: "rotate(-5deg)"
                 }).text(percent + '%')
             )
-        }else{
+        } else {
             discountContainer.html("")
             usualPriceEl.text("")
         }
@@ -267,9 +347,13 @@ class Migros extends Generic {
         const getValue = (key) => {
             // select key next element 
             const txt = $(customBody || "body")
-                .find('td')
+                .find('#nutrient-table td')
                 .filter(function () { // take right td
-                    return $(this).text().trim().toLowerCase().indexOf(key.toLowerCase()) >= 0
+                    for (let a of key) {
+                        if ($(this).text().trim().toLowerCase().indexOf(a.toLowerCase()) >= 0)
+                            return true
+                    }
+                    return false
                 })
                 .first()
                 .next() // take next td
@@ -285,26 +369,16 @@ class Migros extends Generic {
         }
 
         // values
-        const energy = getValue('Energie');
-        const acids = getValue('davon gesättigte Fettsäuren');
-        const sugar = getValue('davon Zucker');
-        const fibers = getValue('Ballaststoffe');
-        const protein = getValue('Eiweiss');
-        const fruitvegetables = getValue('Fruchtgehalt');
+        const energy = getValue(['Energie', 'Energia', 'Énergie']);
+        const acids = getValue(['davon gesättigte Fettsäuren', 'dont acides gras', 'di cui acidi grassi saturi']);
+        const sugar = getValue(['davon Zucker', 'di cui zuccheri', 'dont Sucres']);
+        const fibers = getValue(['Ballaststoffe', 'Fibre alimentari', 'Fibres alimentaires']);
+        const protein = getValue(['Eiweiss', 'Proteine', 'Protéines']);
+        const fruitvegetables = getValue(['Fruchtgehalt']); //TODO missing translations for fruits and natrium
 
         // convert salt to sodium 
-        const sodium = multiply(getValue('Salz'), .4).toNumber('g') > getValue('Natrium').toNumber('g') ? multiply(getValue('Salz'), .4) : getValue('Natrium');
+        const sodium = multiply(getValue(['Sale', 'Salz', 'Sel']), .4).toNumber('g') > getValue(['Natrium']).toNumber('g') ? multiply(getValue(['Sale', 'Salz', 'Sel']), .4) : getValue(['Natrium']);
 
-        // TO ASK WHY FRUIT 0
-        // console.log({
-        //     energy,
-        //     acids,
-        //     sugar,
-        //     fibers,
-        //     protein,
-        //     sodium,
-        //     fruitvegetables
-        // })
         return {
             energy,
             acids,
@@ -333,12 +407,12 @@ class Migros extends Generic {
      * @returns
      * @memberof Migros
      */
-    getProductData(customBody = false){
+    getProductData(customBody = false) {
         const $body = $(customBody || document);
         return {
             category: this.getProductCategory(customBody),
             name: $body.find('.sidebar-product-name').first().text(),
-            price: $body.find('.current-price').first().text(),
+            price: $body.find('.current-price').first().text().replace("€",'').replace('-','').replace("chf",''),
             img: $body.find('.product-stage-slider-image').first().attr("data-src")
         }
     }
@@ -379,6 +453,7 @@ class Migros extends Generic {
             .mui-favorite-button ,
             .community-tabs-pane,
             .bg-wooden,
+            .js-filter-widget.filters-container.products-filters,
             .mui-share-buttons,
             .mui-footer-list-container,
             .mui-footer-link-area

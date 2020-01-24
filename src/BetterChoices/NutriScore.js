@@ -10,7 +10,7 @@ import $ from 'jquery'
  * @returns
  */
 const fromClassRange = (value, intervals, defaultClass) => {
-    for (let i = 0; i < intervals.length - 1; i++)
+    for (let i = 0; i < intervals.length; i++)
         if (intervals[i] && value <= intervals[i])
             return i
 
@@ -62,7 +62,7 @@ const getScoreLocal = (productCategory, {
 
     }
 
-    if (productCategory === 'food') {
+    if (['cheese','food','meat','fish','milk, cheese, eggs','bread & cereals','other food products','fruits, vegetables, potatoes','food in general'].indexOf(productCategory)>-1) {
 
         //energy
         scores.energy = fromClassRange(energy.toNumber(), [335, 670, 1005, 1340, 1675, 2010, 2345, 2680, 3015, 3350]);
@@ -74,20 +74,25 @@ const getScoreLocal = (productCategory, {
         scores.sugar = fromClassRange(sugar.toNumber(), [4.5, 9, 13.5, 18, 22.5, 27, 31, 36, 40, 45]);
 
         //sodium
-        scores.sodium = fromClassRange(sodium.toNumber(), [0.225, 0.45, 0.675, 0.9, 1.125, 1.35, 1.575, 1.8, 2.025, 2.25]);
+        scores.sodium = fromClassRange(sodium.toNumber(), [0.09, 0.18, 0.27, 0.36, .45, .540, .630, .720, .810, .900]);
 
         // fruitvegetables
-        scores.fruitvegetables = fromClassRange(fruitvegetables.toNumber(), [40, 60, 80], 5);
+        scores.fruitvegetables = fromClassRange(fruitvegetables.toNumber(), [40, 60, false, false, 80], 5);
+
+            // ovveride if fruit category
+            if(productCategory==='fruits, vegetables, potatoes'){
+                scores.fruitvegetables = 5;
+            }
 
         // fibers
-        scores.fruitvegetables = fromClassRange(fibers.toNumber(), [0.9, 1.9, 2.8, 3.7, 4.7], 5);
+        scores.fibers = fromClassRange(fibers.toNumber(), [0.9, 1.9, 2.8, 3.7, 4.7], 5);
 
         //proteins
         scores.protein = fromClassRange(protein.toNumber(), [1.6, 3.2, 4.8, 6.4, 8.0], 5);
 
 
 
-    } else { //drink
+    } else if(['water','drink','non-alcoholic beverages'].indexOf(productCategory)>-1) { //drink
 
         scores.energy = fromClassRange(acids, [0, 30, 60, 90, 120, 150, 180, 210, 240, 270]);
 
@@ -98,13 +103,25 @@ const getScoreLocal = (productCategory, {
         scores.sodium = 0;
 
         // false values to skip classes as in the original file 
-        scores.fruitvegetables = fromClassRange(fruitvegetables.toNumber(), [40, false, 60, false, 80]);
+        scores.fruitvegetables = fromClassRange(fruitvegetables.toNumber(), [40, false, 60, 64,68,72,76, 80]);
 
         scores.fibers = 0;
 
         scores.protein = 0;
 
+    }else {
+        return "-" // nutriscore not calculable
     }
+
+    console.log(scores, {
+        energy: energy.toNumber(),
+        fibers: fibers.toNumber(),
+        protein:protein.toNumber(),
+        fruitvegetables:fruitvegetables.toNumber(),
+        sodium:sodium.toNumber(),
+        acids:acids.toNumber(),
+        sugar:sugar.toNumber()
+    })
 
     const badIngredientScore = scores.energy + scores.acids + scores.sodium + scores.sugar
 
@@ -115,16 +132,22 @@ const getScoreLocal = (productCategory, {
     let nutriScoreNumber, nutriScore;
 
     if (badIngredientScore <= 11) {
-        nutriScoreNumber = badIngredientScore - goodIngredientScore - scores.fruitvegetables - scores.fibers;
+        nutriScoreNumber = badIngredientScore - goodIngredientScore;
     } else {
         if (scores.fruitvegetables >= 5) {
-            nutriScoreNumber = badIngredientScore - goodIngredientScore - scores.fruitvegetables - scores.fibers;
+            nutriScoreNumber = badIngredientScore - goodIngredientScore;
         } else {
             nutriScoreNumber = badIngredientScore - scores.fruitvegetables - scores.fibers;
         }
     }
 
-    if (productCategory === 'food') {
+    // ovverrides
+    if(productCategory === 'cheese'){
+        nutriScore = badIngredientScore-goodIngredientScore
+    }
+
+    if (['cheese','food','meat','fish','milk, cheese, eggs','bread & cereals','other food products','fruits, vegetables, potatoes','food in general'].indexOf(productCategory)>-1) {
+        console.log("FOOD", productCategory)
         if (nutriScoreNumber <= -1) {
             nutriScore = "A";
         } else if (nutriScoreNumber <= 2) {
@@ -137,6 +160,7 @@ const getScoreLocal = (productCategory, {
             nutriScore = "E";
         }
     } else { // drink
+        console.log("DRINK", productCategory)
         if (productCategory === 'water') {
             nutriScore = "A";
         } else if (nutriScoreNumber <= 1) {
@@ -188,3 +212,5 @@ const displayScore = (score, group, parent, size='big') => {
 
 
 }
+
+window.getScoreLocal = getScoreLocal;

@@ -79,6 +79,7 @@
         width: 350px;
         h1{
             padding: 30px;
+            padding-bottom: 0;
 
         }
 
@@ -96,9 +97,16 @@
             border-top: 1px solid rgba($color: #000000, $alpha: .2);
             padding: 30px;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-direction: row;
+            align-items: flex-start;
+            justify-content: flex-start;
+            flex-direction: column;
+            .innerFooter {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-direction: row;
+                }
             .tot {
                 margin: 0;
                 font-size: 22px;

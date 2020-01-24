@@ -9,7 +9,6 @@ import {
 } from "../config";
 import $ from "jquery";
 import Storage from "../utils/storage";
-import { getCookie, setCookie } from "../utils/cookies";
 
 
 class BetterFoodChoice {
@@ -35,11 +34,11 @@ class BetterFoodChoice {
             // delete ads
             this.store.clean();
 
-            // check region
-            if(getCookie(this.store.regionCookieName) !== this.store.region){
-                setCookie(this.store.regionCookieName, this.store.region);
-                window.location.reload()
-            }
+            // set default region
+            this.store.setDefaultRegion()
+
+            // set default order
+            this.store.setDefaultOrdering()
 
             // action based on page
             const pageType = this.store.getPageType();
@@ -77,7 +76,7 @@ class BetterFoodChoice {
                     )
 
                     // currency converter
-                    this.store.changePrice()
+                    this.store.changePrice(false,false,false, this.store.getProductCategory())
 
                     // listen to add to cart
                     const addToCartButton = this.store.getAddToCartButton().off('click');
@@ -101,6 +100,7 @@ class BetterFoodChoice {
 
 
                 case this.store.pageTypes.PRODUCTOVERVIEWPAGE: // overview page
+
 
                     // instantiate scraper
                     const scraper = new Scraper();
