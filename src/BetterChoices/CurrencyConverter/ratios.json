@@ -1,0 +1,15 @@
+{
+    "bread and cereals":0.537900365291969,
+    "fish":0.748592080042252,
+    "meat":0.402709509533882,
+    "fruits, vegetables, potatoes":0.598135996087753,
+    "non-alcoholic beverages":0.674067120394274,
+    "milk, cheese, eggs":0.618007359329483,
+    "other food products":0.597363665876501,
+    "food in general":0.54210732471602,
+
+    "drink": 0.674067120394274,
+    "cheese": 0.618007359329483,
+    "water": 0.674067120394274,
+    "food":0.54210732471602
+}

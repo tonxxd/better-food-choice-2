@@ -1,0 +1,63 @@
+{
+    "bread & cereals": [
+        "/sortiment/supermarkt/lebensmittel/baeckerei-confiserie-backen",
+        "/assortiment/supermarche/denrees-alimentaires/boulangerie",
+        "/assortimento/supermercato/alimentari/prodotti-di-panetteria",
+        "/sortiment/supermarkt/lebensmittel/fertiggerichte-menues-snacks",
+        "/assortiment/supermarche/denrees-alimentaires/plats-cuisines",
+        "/assortimento/supermercato/alimentari/piatti-pronti",
+        "/sortiment/supermarkt/lebensmittel/mueesli-cerealien",
+        "/assortiment/supermarche/denrees-alimentaires/mueesli-cereales",
+        "/assortimento/supermercato/alimentari/mueesli-e-cereali",
+        "/sortiment/supermarkt/lebensmittel/pasta-zutaten-konserven",
+        "/assortiment/supermarche/denrees-alimentaires/garnitures-ingredients",
+        "/assortimento/supermercato/alimentari/contorni-e-ingredienti",
+        "/sortiment/supermarkt/lebensmittel/waehen",
+        "/assortiment/supermarche/denrees-alimentaires/tartes",
+        "/assortimento/supermercato/alimentari/crostate"
+    ],
+    "other food products":[
+        "/sortiment/supermarkt/lebensmittel/chips-erdnuesse-aperitif",
+        "/assortiment/supermarche/denrees-alimentaires/aperitif",
+        "/assortimento/supermercato/alimentari/aperitivi",
+        "/sortiment/supermarkt/lebensmittel/fruehstueck",
+        "/assortiment/supermarche/denrees-alimentaires/petit-dejeuner",
+        "/assortimento/supermercato/alimentari/colazione",
+        "/sortiment/supermarkt/lebensmittel/sonstiges",
+        "/assortiment/supermarche/denrees-alimentaires/divers",
+        "/assortimento/supermercato/alimentari/altro",
+        "/sortiment/supermarkt/lebensmittel/suessigkeiten",
+        "/assortiment/supermarche/denrees-alimentaires/chocolat",
+        "/assortimento/supermercato/alimentari/cioccolato"
+    ],
+    "fish":[
+        "/sortiment/supermarkt/lebensmittel/fisch-meeresfruechte",
+        "/assortiment/supermarche/denrees-alimentaires/poisson-fruits-de-mer",
+        "/assortimento/supermercato/alimentari/pesce-e-frutti-di-mare"
+    ],
+    "meat":[
+        "/sortiment/supermarkt/lebensmittel/fleisch",
+        "/assortiment/supermarche/denrees-alimentaires/viande",
+        "/assortimento/supermercato/alimentari/carne"
+    ],
+    "fruits, vegetables, potatoes":[
+        "/sortiment/supermarkt/lebensmittel/fruechte-gemuese",
+        "/assortiment/supermarche/denrees-alimentaires/fruits-et-legumes",
+        "/assortimento/supermercato/alimentari/frutta-e-verdura"
+    ],
+    "non-alcoholic beverages":[
+        "/sortiment/supermarkt/lebensmittel/getraenke-heiss-kalt",
+        "/assortiment/supermarche/denrees-alimentaires/boissons-chaudes-froides",
+        "/assortimento/supermercato/alimentari/bevande-calde-e-fredde"
+    ],
+    "milk, cheese, eggs":[
+        "/sortiment/supermarkt/lebensmittel/milchprodukte-eier",
+        "/assortiment/supermarche/denrees-alimentaires/produits-laitiers-oeufs",
+        "/assortimento/supermercato/alimentari/latticini-e-uova"
+    ],
+    "food in general":[
+        "/sortiment/supermarkt/lebensmittel/tiefkuehlprodukte",
+        "/assortiment/supermarche/denrees-alimentaires/produits-surgeles",
+        "/assortimento/supermercato/alimentari/prodotti-surgelati"
+    ]
+}
