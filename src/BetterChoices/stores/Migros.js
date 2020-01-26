@@ -254,12 +254,12 @@ class Migros extends Generic {
      *
      * @memberof Migros
      */
-    changePriceList(el, data) {
+    changePriceList(el, cat) {
             this.changePrice(
                 el.find(".mui-product-tile-price"),
                 el.find('.mui-product-tile-original-price'),
                 el.find('.mui-product-tile-discount-image-container'),
-                data.category
+                category
             )
             el.addClass('updatedBetterFoodChoice')
       
@@ -408,10 +408,11 @@ class Migros extends Generic {
      */
     getProductData(customBody = false) {
         const $body = $(customBody || document);
+
         return {
             category: this.getProductCategory(customBody),
             name: $body.find('.sidebar-product-name').first().text(),
-            price: convertPrice($body.find('.current-price').first().text().replace("€",'').replace('-','').replace("chf",''),this.getProductCategory(customBody)),
+            price: $body.find('.current-price').first().text().replace("€",'').replace('-','').replace("chf",''),
             img: $body.find('.product-stage-slider-image').first().attr("data-src")
         }
     }

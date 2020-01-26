@@ -152,7 +152,7 @@ class BetterFoodChoice {
                                 )
 
                                 // convert price
-                                this.store.changePriceList(this.store.listItemFromHref(urlsSlice[index]),this.store.getProductData(b))
+                                this.store.changePriceList(this.store.listItemFromHref(urlsSlice[index]),this.store.getProductCategory(b))
                             })
 
                             // listen to add to cart events
