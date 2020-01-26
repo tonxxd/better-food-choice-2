@@ -41,8 +41,8 @@ firebase.initializeApp({
     // check region
 
     // track page
-    if(!tracker) tracker = new Tracker(await Storage.get("bfc:userID"));
-    
+    if (!tracker) tracker = new Tracker(await Storage.get("bfc:userID"));
+
 
     // init main plugin class
     const App = new BetterFoodChoice(tracker);
@@ -88,10 +88,16 @@ firebase.initializeApp({
         const country = await Storage.get('bfc:country');
         const userID = await Storage.get('bfc:userID')
         let q = '';
-        switch(group){
-          case 'A': q = country == 'de' ? 'PQDET2' : 'PQCHT2'; break;
-          case 'B': q = country == 'de' ? 'PQDET' : 'PQCHT'; break;
-          case 'C': q = country == 'de' ? 'PQDEC' : 'PQCHC'; break;
+        switch (group) {
+          case 'A':
+            q = country == 'de' ? 'PQDET2' : 'PQCHT2';
+            break;
+          case 'B':
+            q = country == 'de' ? 'PQDET' : 'PQCHT';
+            break;
+          case 'C':
+            q = country == 'de' ? 'PQDEC' : 'PQCHC';
+            break;
         }
 
         window.location.href = `https://www.soscisurvey.de/NUS_1/?r=${userID}&q=${q}`
@@ -102,10 +108,41 @@ firebase.initializeApp({
 
   }
 
+  const initSurvey = async () => {
+    const survey = new Survey(await Storage.get("bfc:country"))
+    survey.render(async (data) => {
+
+      // language change
+      Storage.set("bfc:country", data.country)
+
+      // init tracker
+      const tracker = new Tracker(await Storage.get("bfc:userID"))
+
+
+      // send infos to backed
+      let studyGroup = await tracker.trackEvent('survey', data)
+
+      // set study group
+      Storage.set('bfc:studyGroup', studyGroup)
+
+      // callback when done survey  
+      initApp(tracker)
+
+      // set did intro survey
+      Storage.set("bfc:introSurvey", 'true')
+
+    });
+  }
+
 
   // run app if already did survey
   if (await Storage.get('bfc:introSurvey') == 'true') {
     initApp()
+  }
+
+  // if not completed survey
+  if(! await Storage.get('bfc:introSurvey') && await Storage.get("bfc:studyStatus") == '1'){
+    initSurvey()
   }
 
 
@@ -120,33 +157,10 @@ firebase.initializeApp({
       // set study status 
       Storage.set('bfc:studyStatus', 1)
 
+      // set study status 
+      Storage.set('bfc:country', request.payload.lang)
 
-      const survey = new Survey(request.payload.lang)
-      survey.render(async (data) => {
-
-        // language change
-        Storage.set("bfc:country", data.country)
-        // TODOOO send changed lang to extension 
-
-        // init tracker
-        const tracker = new Tracker(request.payload.userID)
-
-
-        // send infos to backed
-        let studyGroup = await tracker.trackEvent('survey', data)
-        console.log(studyGroup)
-        // set study group
-        Storage.set('bfc:studyGroup', studyGroup)
-
-
-        // callback when done survey  
-        initApp(tracker)
-
-        // set did intro survey
-        Storage.set("bfc:introSurvey", 'true')
-        // TODO send to extension
-
-      });
+      initSurvey();
 
     }
 
