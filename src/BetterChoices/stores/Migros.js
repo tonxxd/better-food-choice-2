@@ -255,7 +255,6 @@ class Migros extends Generic {
      * @memberof Migros
      */
     changePriceList(el, data) {
-        console.log(el, data)
             this.changePrice(
                 el.find(".mui-product-tile-price"),
                 el.find('.mui-product-tile-original-price'),
@@ -302,7 +301,8 @@ class Migros extends Generic {
         let usualPrice_chf = usualPriceEl.text().replace('.-', '').replace('-', '').replace('statt', '').trim();
         usualPrice_chf = parseFloat(usualPrice_chf)
 
-        console.log(currentPrice_eur, currentPrice_chf, category, userCountry)
+        console.log(currentPrice_chf, currentPrice_eur, category)
+
 
         // discount
         if (usualPrice_chf && settings.showDiscount) {

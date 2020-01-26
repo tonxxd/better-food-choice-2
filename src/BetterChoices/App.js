@@ -127,6 +127,11 @@ class BetterFoodChoice {
                         // filter urls to be scraped
                         let toScrape = allUrls.filter(u => urls.indexOf(u) < 0);
 
+                        // update urls important 
+                        urls = allUrls
+
+                        console.log(urls.length)
+
                         // scrape urls in small batches to improve performances and prevent abuse
                         scraper.scrapeBatch(toScrape, (urlsSlice, bodies) => {
                             
@@ -149,9 +154,6 @@ class BetterFoodChoice {
                                 // convert price
                                 this.store.changePriceList(this.store.listItemFromHref(urlsSlice[index]),this.store.getProductData(b))
                             })
-
-                            // update scraper urls
-                            urls = [...urls, ...urlsSlice];
 
                             // listen to add to cart events
                             urlsSlice.forEach((e, i) => {
