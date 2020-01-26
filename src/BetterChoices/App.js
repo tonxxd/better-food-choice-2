@@ -145,6 +145,9 @@ class BetterFoodChoice {
                                     this.store.listItemTargetFromHref(urlsSlice[index]),
                                     'small'
                                 )
+
+                                // convert price
+                                this.store.changePriceList(this.store.listItemFromHref(urlsSlice[index]),this.store.getProductData(b))
                             })
 
                             // update scraper urls
@@ -177,8 +180,7 @@ class BetterFoodChoice {
 
 
 
-                        // convert prices
-                        this.store.changePriceList()
+                        
                     }
 
                     // configure observer
@@ -187,6 +189,8 @@ class BetterFoodChoice {
                         subtree: true,
                         childList: true
                     });
+
+                    // iterateProducts()
 
                     // //page change 
                     // window.onhashchange = () => {

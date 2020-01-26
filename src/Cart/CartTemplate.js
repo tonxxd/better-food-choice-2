@@ -21,7 +21,7 @@ const CartListWrapper = posed.div({
     hide: {left: '-100%'}
 })
 const CartList = props => {
-    console.log(props.products)
+    // console.log(props.products)
 
     const [group, setGroup] = useState('C')
 

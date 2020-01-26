@@ -113,15 +113,15 @@ const getScoreLocal = (productCategory, {
         return "-" // nutriscore not calculable
     }
 
-    console.log(scores, {
-        energy: energy.toNumber(),
-        fibers: fibers.toNumber(),
-        protein:protein.toNumber(),
-        fruitvegetables:fruitvegetables.toNumber(),
-        sodium:sodium.toNumber(),
-        acids:acids.toNumber(),
-        sugar:sugar.toNumber()
-    })
+    // console.log(scores, {
+    //     energy: energy.toNumber(),
+    //     fibers: fibers.toNumber(),
+    //     protein:protein.toNumber(),
+    //     fruitvegetables:fruitvegetables.toNumber(),
+    //     sodium:sodium.toNumber(),
+    //     acids:acids.toNumber(),
+    //     sugar:sugar.toNumber()
+    // })
 
     const badIngredientScore = scores.energy + scores.acids + scores.sodium + scores.sugar
 
@@ -147,7 +147,7 @@ const getScoreLocal = (productCategory, {
     }
 
     if (['cheese','food','meat','fish','milk, cheese, eggs','bread & cereals','other food products','fruits, vegetables, potatoes','food in general'].indexOf(productCategory)>-1) {
-        console.log("FOOD", productCategory)
+        // console.log("FOOD", productCategory)
         if (nutriScoreNumber <= -1) {
             nutriScore = "A";
         } else if (nutriScoreNumber <= 2) {
@@ -160,7 +160,7 @@ const getScoreLocal = (productCategory, {
             nutriScore = "E";
         }
     } else { // drink
-        console.log("DRINK", productCategory)
+        // console.log("DRINK", productCategory)
         if (productCategory === 'water') {
             nutriScore = "A";
         } else if (nutriScoreNumber <= 1) {

@@ -105,7 +105,6 @@ firebase.initializeApp({
 
   // run app if already did survey
   if (await Storage.get('bfc:introSurvey') == 'true') {
-    console.log(await Storage.get('bfc:introSurvey'))
     initApp()
   }
 

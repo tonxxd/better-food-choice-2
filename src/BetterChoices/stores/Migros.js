@@ -254,17 +254,16 @@ class Migros extends Generic {
      *
      * @memberof Migros
      */
-    changePriceList() {
-        const $this = this;
-        $('.mui-lazy-load-product:first').find(".mui-product-tile:not(.updatedBetterFoodChoice)").each(function () {
-            $this.changePrice(
-                $(this).find(".mui-product-tile-price"),
-                $(this).find('.mui-product-tile-original-price'),
-                $(this).find('.mui-product-tile-discount-image-container'),
-                $this.getPageCategory()
+    changePriceList(el, data) {
+        console.log(el, data)
+            this.changePrice(
+                el.find(".mui-product-tile-price"),
+                el.find('.mui-product-tile-original-price'),
+                el.find('.mui-product-tile-discount-image-container'),
+                data.category
             )
-            $(this).addClass('updatedBetterFoodChoice')
-        })
+            el.addClass('updatedBetterFoodChoice')
+      
     }
 
     getAddToCartButton(element) {
@@ -412,7 +411,7 @@ class Migros extends Generic {
         return {
             category: this.getProductCategory(customBody),
             name: $body.find('.sidebar-product-name').first().text(),
-            price: $body.find('.current-price').first().text().replace("€",'').replace('-','').replace("chf",''),
+            price: convertPrice($body.find('.current-price').first().text().replace("€",'').replace('-','').replace("chf",''),this.getProductCategory(customBody)),
             img: $body.find('.product-stage-slider-image').first().attr("data-src")
         }
     }
