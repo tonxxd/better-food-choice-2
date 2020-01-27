@@ -259,7 +259,7 @@ class Migros extends Generic {
                 el.find(".mui-product-tile-price"),
                 el.find('.mui-product-tile-original-price'),
                 el.find('.mui-product-tile-discount-image-container'),
-                category
+                cat
             )
             el.addClass('updatedBetterFoodChoice')
       
