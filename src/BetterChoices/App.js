@@ -20,6 +20,22 @@ class BetterFoodChoice {
 
         // detect store
         this.getStore();
+
+        // setup url change polling
+        let oldUrl = window.location.href;
+        setInterval(()=>{
+            if(oldUrl !== window.location.href){
+                oldUrl =window.location.href;
+                this.tracker.stop()
+                this.tracker.trackPage(this.store.getPageCategory(), window.location.href, $("title").text(), this.store.getGTIN());
+            }
+        },1000)
+
+        $(window).on("onbeforeunload", function() {
+           this.tracker.stop()
+        });
+
+
     }
 
 

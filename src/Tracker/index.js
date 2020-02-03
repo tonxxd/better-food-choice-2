@@ -58,8 +58,7 @@ class Tracker {
             value
         });
 
-        if (action === 'survey')
-            return data // chosen group
+        return data // chosen group
     }
 }
 
