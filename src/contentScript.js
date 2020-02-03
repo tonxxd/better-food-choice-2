@@ -106,6 +106,8 @@ firebase.initializeApp({
 
     }
 
+    
+
   }
 
   const initSurvey = async () => {

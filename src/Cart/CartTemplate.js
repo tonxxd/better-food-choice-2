@@ -5,6 +5,7 @@ import './cart.scss';
 import {CartIcon, CloseIcon} from './icons';
 import Storage from '../utils/storage';
 import { settings } from '../config';
+import BetterFoodChoice from '../BetterChoices/App';
 
 
 const CartButton = props => {
@@ -12,6 +13,17 @@ const CartButton = props => {
         <div id="bfcCartButtonEl" onClick={ e => props.setShowCartList(true)}>
             <span className="badge">{props.count}</span>
             <CartIcon color={'white'} />
+        </div>
+    )
+}
+
+const TaskButton = props => {
+    return (
+        <div id="bfcCartButtonEl" className="taskPopup" onClick={ e => {
+            BetterFoodChoice.showTaskDesc(()=>{
+            })
+        }}>
+            ?
         </div>
     )
 }
@@ -41,7 +53,7 @@ const CartList = props => {
                         <div className="img" style={{background: `url(${p.img})`}} />
                         <p>
                             {p.name} <span>x{p.quantity || 1}</span>
-                            <span>{p.currency} {p.price}</span>
+                            <span>{p.currency.toUpperCase()} {p.price}</span>
                             {((group === 'A') || (group == 'B' && ['C','D','E'].indexOf(p.nutriScore) === -1)) && <img src={chrome.runtime.getURL(`ns${p.nutriScore}.png`)} />}
                         </p>
                         <a href="#" onClick={e => {
@@ -54,7 +66,7 @@ const CartList = props => {
             </div>
             <div className="listFooter">
                 <div className="innerFooter">
-                <p className="tot">Tot: <span>{(props.products[0] || {}).currency || 'chf'} {total}</span></p>
+                <p className="tot">Total: <span>{((props.products[0] || {}).currency || 'chf').toUpperCase()} {total}</span></p>
                 <button className="button" onClick={e => {
                     // return if over budget
                     console.log(total, props.products[0].currency, settings.maxBudget[props.products[0].currency])
@@ -64,9 +76,9 @@ const CartList = props => {
                     }
                     props.setShowCartList(false)
                     setTimeout(props.onFinishStudy, 800)
-                }}>Finish study</button>
+                }}>Check out</button>
                 </div>
-                <div>Budget: {(props.products[0] || {}).currency || 'chf'} {settings.maxBudget[(props.products[0] || {}).currency || 'chf']}</div>
+                <div>Budget: {((props.products[0] || {}).currency || 'CHF').toUpperCase()} {settings.maxBudget[(props.products[0] || {}).currency || 'chf']}</div>
             </div>
         </CartListWrapper>
     )
@@ -179,6 +191,7 @@ const CartTemplate = props => {
 
     return [
         <Notification products={products} />,
+        <TaskButton />,
         <CartButton count={products.reduce((sum ,p) => sum+(p.quantity || 1), 0)} setShowCartList={setShowCartList}/>,
         <CartList products={products} onFinishStudy={() => props.cartClass.onFinishStudy(products)} showCartList={showCartList} setShowCartList={setShowCartList} removeProduct={removeProduct}/>
     ]

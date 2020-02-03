@@ -1,10 +1,19 @@
 import { h, render } from "preact";
-
+import $ from 'jquery';
 import SurveyTemplate from './SurveyTemplate';
+
 class Survey {
 
     constructor(country){
-        this.country = country
+        this.country = country;
+
+        window.BFCSurvey = this;
+    }
+
+    renderBadge(){
+        const el = $('<div id="bfcCartButtonEl" class="bfcSurveyBadge">?</div>')
+        el.on("click", window.BFCSurvey.showTaskDesc)
+        $("body").prepend(el)
     }
 
     render(callback){

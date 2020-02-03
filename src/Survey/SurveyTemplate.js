@@ -5,6 +5,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import posed, { PoseGroup } from 'react-pose';
 import {object, number, string} from 'yup';
 import {useEffect} from 'preact/hooks'
+import BetterFoodChoice from '../BetterChoices/App';
 
 const Step = posed.div({
     enter: {opacity:1},
@@ -58,6 +59,11 @@ const Survey = (props) => {
                 t:'Wie hoch ist das monatlich verfügbare Nettoeinkommen Ihres Haushalts?',
                 name: 'income',
                 options: ['0 – 999 Fr.','1000– 1999 Fr.','2000 – 2999 Fr.','3000 – 3999 Fr.','4000 – 4999 Fr.','5000 – 5999 Fr.','6000 – 6999 Fr.','>= 7000 Fr. ','Keine Angabe'],
+            },
+            {
+                t:'User ID',
+                name:'studyUserID',
+                placeholder: ''
             }
         ],
         de: [
@@ -77,6 +83,11 @@ const Survey = (props) => {
                 t:'Wie hoch ist das monatlich verfügbare Nettoeinkommen Ihres Haushalts?',
                 name:'income',
                 options: ['0 – 499 €','500 – 999€','1000 – 1999 €','2000 – 2999 €','3000 – 3999 €','4000 – 4999 €','5000 – 5999 €','>= 6000 €','Keine Angabe']
+            },
+            {
+                t:'User ID',
+                name:'studyUserID',
+                placeholder: ''
             }
         ]
     }
@@ -93,12 +104,16 @@ const Survey = (props) => {
                     onSubmit={(values, { setSubmitting }) => {
                         setSubmitting(false);
 
-                        // send data to main handler
-                        props.callback({
-                            ...values,
-                            country
-                        });
+                        
                         setShowModal(false)
+
+                        BetterFoodChoice.showTaskDesc(()=>{
+                            // send data to main handler
+                            props.callback({
+                                ...values,
+                                country
+                            });
+                        })
                     }}
                     // validate data
                     validationSchema={object({
@@ -108,10 +123,11 @@ const Survey = (props) => {
                             .required('Required'),
                         education: number().integer().required(),
                         income: number().integer().required(),
-                        genre: number().integer().required()
+                        genre: number().integer().required(),
+                        studyUserID:  string().required(),
                       })}
                       //initialValues={{genre:false,age:'',education:false,income:false}}
-                      initialValues={{genre:1,age:'30',education:1,income:1}}
+                      initialValues={{genre:1,age:'30',education:1,income:1, studyUserID:''}}
 
                 >{({setFieldValue, values, errors, isSubmitting }) => 
                     <Form>
@@ -138,7 +154,7 @@ const Survey = (props) => {
                                 {
                                     questions[country].map(q => (
                                         <div className="question">
-                                            <h2>Wie alt sind Sie?</h2>
+                                            <h2>{q.t}</h2>
                                             {q.options ? <FieldOptions name={q.name} options={q.options} setFieldValue={setFieldValue} value={values[q.name]}/> : <Field placeholder={q.placeholder} className={'input'} type="text" name={q.name}/>}
                                             <ErrorMessage className="error" name={q.name} component="div" />
                                         </div>
