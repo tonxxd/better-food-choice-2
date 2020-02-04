@@ -121,13 +121,13 @@ const Survey = (props) => {
                             .max(100,'Older than 100?')
                             .min(18, 'Must be 18 years old')
                             .required('Required'),
-                        education: number().integer().required(),
-                        income: number().integer().required(),
-                        genre: number().integer().required(),
-                        studyUserID:  string().required(),
+                        education: number().typeError('Required').integer().required('Required'),
+                        income: number().typeError('Required').integer().required('Required'),
+                        genre: number().typeError('Required').integer().required('Required'),
+                        studyUserID:  string().required('Required'),
                       })}
                       //initialValues={{genre:false,age:'',education:false,income:false}}
-                      initialValues={{genre:1,age:'30',education:1,income:1, studyUserID:''}}
+                      initialValues={{genre:false,age:'',education:false,income:false, studyUserID:''}}
 
                 >{({setFieldValue, values, errors, isSubmitting }) => 
                     <Form>
