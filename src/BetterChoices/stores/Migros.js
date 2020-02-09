@@ -303,6 +303,8 @@ class Migros extends Generic {
 
         if (userCountry === 'de')
             currentPriceEl.text('€ ' + currentPrice_eur)
+        else 
+            currentPriceEl.text('CHF '+currentPrice_chf)
 
         let usualPrice_chf = usualPriceEl.text().replace('.-', '').replace('-', '').replace('statt', '').trim();
         usualPrice_chf = parseFloat(usualPrice_chf)
