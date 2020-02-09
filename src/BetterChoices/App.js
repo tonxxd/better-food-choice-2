@@ -82,7 +82,7 @@ class BetterFoodChoice {
                     );
 
                     // if (remoteNutriScore != localNutriScore)
-                    //     alert(`Different ${remoteNutriScore} ${localNutriScore}`)
+                    if(settings.showDifferentNutriAlert) alert(`Different ${remoteNutriScore} ${localNutriScore}`)
                     const nutri_score_final = remoteNutriScore || localNutriScore
 
                     // display score

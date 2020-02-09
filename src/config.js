@@ -15,6 +15,8 @@ export const API = {
 export const settings = {
     overviewBatchSize: 3,
 
+    showDifferentNutriAlert: false,
+
     disableApi: false,
 
     defaultGroup: 'C',

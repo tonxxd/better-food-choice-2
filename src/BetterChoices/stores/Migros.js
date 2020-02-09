@@ -431,7 +431,11 @@ class Migros extends Generic {
         // Remove Add to Favorite 
         $('.sidebar-favorite-button-container').remove()
 
+        // Remove Review and rating (BY JIE)
+        $('.mui-rating, .mui-rating-counter').remove()
 
+        // Remove energy-pictogram-box(BY JIE)
+        $('.energy-pictogram-box').remove()
 
         // Category Overview Page
         $(`
