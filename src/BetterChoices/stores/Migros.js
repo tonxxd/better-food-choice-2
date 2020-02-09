@@ -243,7 +243,7 @@ class Migros extends Generic {
      */
     getUrlsFromOverview() {
         let urls = [];
-        $('.mui-product-tile').each(function () {
+        $('.mui-product-tile:not(.updatedBetterFoodChoice)').each(function () {
             urls.push($(this).attr("href"))
         })
         return urls
@@ -296,7 +296,8 @@ class Migros extends Generic {
         }
             
 
-        let currentPrice_chf = currentPriceEl.text().replace('.-', '').replace('-', '').trim();
+        let currentPrice_chf = currentPriceEl.text().replace('.-', '').replace('CHF','').replace("€",'').replace("ab",'').replace("Nan",'').replace('-', '').trim();
+        console.log(currentPrice_chf)
         currentPrice_chf = parseFloat(currentPrice_chf);
 
         const currentPrice_eur = convertPrice(currentPrice_chf, category)
