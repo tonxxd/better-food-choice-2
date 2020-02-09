@@ -290,6 +290,12 @@ class Migros extends Generic {
         const usualPriceEl = customUsualPriceEl || $('.usual-price');
         const discountContainer = customDiscountContainer || $('.sidebar-discount-badge');
 
+        // prevent nan
+        if(currentPriceEl.length ===0){
+            return
+        }
+            
+
         let currentPrice_chf = currentPriceEl.text().replace('.-', '').replace('-', '').trim();
         currentPrice_chf = parseFloat(currentPrice_chf);
 
