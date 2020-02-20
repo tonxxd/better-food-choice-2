@@ -86,6 +86,10 @@ class Migros extends Generic {
         }
     }
 
+    changeLogoLink(){
+        $(".logo").closest("a").attr("href",'https://www.migros.ch/de/einkaufen.html')
+    }
+
     /**
      *
      *
@@ -245,6 +249,7 @@ class Migros extends Generic {
         let urls = [];
         $('.mui-product-tile:not(.updatedBetterFoodChoice)').each(function () {
             urls.push($(this).attr("href"))
+            $(this).addClass('updatedBetterFoodChoice')
         })
         return urls
     }
@@ -269,6 +274,12 @@ class Migros extends Generic {
         if (!element)
             return $(".sidebar-product-information").find(".mui-shoppinglist-add").first()
         return element.find('.mui-shoppinglist-button-add')
+    }
+
+
+    blockAddToCart(){
+        const $el = $('.mui-product-tile:not(.updatedBetterFoodChoice)').find(".mui-shoppinglist-button-add").clone(true).off();
+        $('.mui-product-tile:not(.updatedBetterFoodChoice)').find(".mui-shoppinglist-button-add").replaceWith($el)
     }
 
 
@@ -415,13 +426,23 @@ class Migros extends Generic {
      * @returns
      * @memberof Migros
      */
-    getProductData(customBody = false) {
+    async getProductData(customBody = false) {
         const $body = $(customBody || document);
 
+        const category = this.getProductCategory(customBody);
+        let price = $body.find('.current-price').first().text().replace("€",'').replace('-','').replace("chf",'')
+        console.log(price);
+        // convert price
+        if(await Storage.get("bfc:country") == 'de')
+            price = convertPrice(price,category)
+        
+        const regex = /([\d.?]+)\s?(l|ml|g|kg|gr)([\s?.?,?;?])/
+        const sizeMatch = regex.exec($body.find(".sidebar-subtext").text()) || regex.exec($body.find('.sidebar-product-name').first().text())
         return {
-            category: this.getProductCategory(customBody),
-            name: $body.find('.sidebar-product-name').first().text(),
-            price: $body.find('.current-price').first().text().replace("€",'').replace('-','').replace("chf",''),
+            category,
+            name: $body.find('.sidebar-product-name').first().text().replace(regex,''),
+            price,
+            size: sizeMatch ? unit(sizeMatch[1],sizeMatch[2]) : false,
             img: $body.find('.product-stage-slider-image').first().attr("data-src")
         }
     }

@@ -1,6 +1,7 @@
 import { h, render } from "preact";
 import $ from 'jquery';
 import SurveyTemplate from './SurveyTemplate';
+import BetterFoodChoice from "../BetterChoices/App";
 
 class Survey {
 
@@ -12,7 +13,15 @@ class Survey {
 
     renderBadge(){
         const el = $('<div id="bfcCartButtonEl" class="bfcSurveyBadge">?</div>')
-        el.on("click", window.BFCSurvey.showTaskDesc)
+        el.on("click", ()=>{
+            BetterFoodChoice.showTaskDesc(0, ()=>{
+
+                BetterFoodChoice.showTaskDesc(1, ()=>{
+                    
+                })
+                
+            })
+        })
         $("body").prepend(el)
     }
 

@@ -10,6 +10,7 @@ import {
 import $ from "jquery";
 import Storage from "../utils/storage";
 import taskDesc from "./taskDesc";
+import { RestartIcon } from "../Cart/icons";
 
 
 class BetterFoodChoice {
@@ -50,6 +51,11 @@ class BetterFoodChoice {
         try {
             // delete ads
             this.store.clean();
+
+            // prevent default action migros add to cart
+            // this.store.blockAddToCart()
+
+            this.store.changeLogoLink()
 
             // set default region
             this.store.setDefaultRegion()
@@ -97,6 +103,7 @@ class BetterFoodChoice {
 
                     // listen to add to cart
                     const addToCartButton = this.store.getAddToCartButton().off('click');
+                    addToCartButton.addClass("bfcAltered")
                     addToCartButton.off("click") // delete events
 
                     // listen to click
@@ -104,7 +111,7 @@ class BetterFoodChoice {
                         e.stopPropagation()
                         e.preventDefault();
 
-                        const productData = this.store.getProductData();
+                        const productData = await this.store.getProductData();
 
                         // block if no price
                         if (productData.price == '') {
@@ -138,36 +145,47 @@ class BetterFoodChoice {
                     const iterateProducts = async () => {
 
 
+
                         // get all urls from product list
                         let allUrls = this.store.getUrlsFromOverview();
+                        this.store.blockAddToCart()
 
-                        if (allUrls[0] != urls[0])
-                            urls = []
+                        // if (allUrls[0] != urls[0])
+                        //     urls = []
 
 
-                        // if list not changed return
-                        if (allUrls.length === urls.length)
-                            return
+                        // // if list not changed return
+                        // if (allUrls.length === urls.length)
+                        //     return
 
-                        // filter urls to be scraped
-                        let toScrape = allUrls.filter(u => urls.indexOf(u) < 0);
+                        // // filter urls to be scraped
+                        // let toScrape = allUrls.filter(u => urls.indexOf(u) < 0);
 
-                        // update urls important 
-                        urls = allUrls
+                        // // update urls important 
+                        // urls = allUrls
 
-                        console.log(urls.length)
+                        // console.log(urls.length)
 
                         // scrape urls in small batches to improve performances and prevent abuse
-                        scraper.scrapeBatch(toScrape, (urlsSlice, bodies) => {
+                        scraper.scrapeBatch(allUrls, (urlsSlice, bodies) => {
 
 
                             let nutriscores = [];
                             // calculate score
-                            bodies.forEach((b, index) => {
-                                const nutri_score_final = getScoreLocal(
+                            bodies.forEach(async (b, index) => {
+
+
+                                console.log(this.store.getGTIN(b))
+                                const remoteData = await this.store.loadProductData(this.store.getGTIN(b))
+                                const remoteNutriScore = remoteData ? remoteData.nutri_score_final : false;
+                                if (settings.showDifferentNutriAlert) alert(`Different ${remoteNutriScore} ${localNutriScore}`)
+                                const localNutriScore = getScoreLocal(
                                     this.store.getProductCategory(b),
                                     this.store.getFoodValues(b)
                                 )
+                                console.log(remoteNutriScore, localNutriScore)
+                                const nutri_score_final = remoteNutriScore || localNutriScore
+
                                 nutriscores.push(nutri_score_final)
                                 displayScore(
                                     nutri_score_final,
@@ -185,6 +203,7 @@ class BetterFoodChoice {
 
                                 // delete all events
                                 const addToCartButton = this.store.getAddToCartButton(this.store.listItemFromHref(e))
+                                addToCartButton.addClass("bfcAltered")
                                 addToCartButton.off('click');
 
                                 // listen to click
@@ -192,7 +211,7 @@ class BetterFoodChoice {
                                     e.stopPropagation()
                                     e.preventDefault();
 
-                                    const productData = this.store.getProductData(bodies[i]);
+                                    const productData = await this.store.getProductData(bodies[i]);
 
                                     // block if no price
                                     if (productData.price == '') {
@@ -256,7 +275,7 @@ class BetterFoodChoice {
         return this.store;
     }
 
-    static showAlert(title, text, actionHandler) {
+    static showAlert(title, text, actionHandler, actionHandlerLabel='close', alternativeAction = false, alternativeActionLabel="Yes") {
         const $alertWrapper = $("<div />").css({
             position: 'fixed',
             top: 0,
@@ -294,19 +313,38 @@ class BetterFoodChoice {
             padding: '10px 20px',
             borderRadius: 4,
             marginTop: 20
-        }).text("Close").on("click", (e) => {
+        }).text(actionHandlerLabel).on("click", (e) => {
             e.preventDefault();
             $alertWrapper.remove();
             actionHandler()
         })
+        const $alternativeAction = alternativeAction ? $("<button />").css({
+            background: '#00d1b2',
+            color: 'white',
+            padding: '10px 20px',
+            borderRadius: 4,
+            marginTop: 20
+        }).text(alternativeActionLabel).on("click", (e) => {
+            e.preventDefault();
+            $alertWrapper.remove();
+            alternativeAction()
+        }):$("<p>")
 
-        $("body").append($alertWrapper.append($alert.append($h1, $p, $action)));
+        $("body").append($alertWrapper.append($alert.append($h1, $p, $action,$alternativeAction)));
 
     }
 
-    static showTaskDesc(actionHandler) {
+    static async showRestartButton() {
+        const button = $("<div />").attr("id","bfcRestartBtn").on("click", async ()=>{
+            await Storage.clear()
+            window.location.reload()
+        }).html(RestartIcon)
+        $("body").prepend(button)
+    }
 
-        const $alertWrapper = $("<div />").css({
+    static async showTaskDesc(index, actionHandler) {
+
+        const $alertWrapper = $("<div id='bfcTask' />").css({
             position: 'fixed',
             top: 0,
             left: 0,
@@ -319,6 +357,7 @@ class BetterFoodChoice {
             overflow: 'scroll',
             background: 'rgba(0,0,0,.3)'
         })
+        $alertWrapper.append($("<style>").html("#bfcTask img{max-width: 100%; max-height: 400px}"))
         const $alert = $('<div />').css({
             width: '800px',
             padding: 30,
@@ -328,14 +367,14 @@ class BetterFoodChoice {
             borderRadius: 5,
             boxShadow: '0 5px 10px rgba(0,0,0,.2)'
         })
-        const $p = $("<div/>").css({}).html(taskDesc)
+        const $p = $("<div/>").css({}).html(taskDesc[index](await Storage.get("bfc:studyGroup"),await Storage.get("bfc:country")))
         const $action = $("<button />").css({
             background: 'rgba(0,0,0,.4)',
             color: 'white',
             padding: '10px 20px',
             borderRadius: 4,
             marginTop: 20
-        }).text("Close").on("click", (e) => {
+        }).text(index == 1 ? 'Close' : 'Next').on("click", (e) => {
             e.preventDefault();
             $alertWrapper.remove();
             actionHandler()

@@ -22,7 +22,7 @@ const FieldOptions = ({name, options, setFieldValue, value}) => {
         <div className={'options'}>
             {options.map((o, index) => (
                 <label className="radioInput">
-                    <input type="radio" className="radioInputStyled" value={index} checked={value === index} onChange={e => setFieldValue(name, index)} />
+                    <input type="radio" className="radioInputStyled" value={o} checked={value === o} onChange={e => setFieldValue(name, o)} />
                     {o}
                 </label>
             ))}
@@ -107,12 +107,16 @@ const Survey = (props) => {
                         
                         setShowModal(false)
 
-                        BetterFoodChoice.showTaskDesc(()=>{
-                            // send data to main handler
-                            props.callback({
-                                ...values,
-                                country
-                            });
+                        BetterFoodChoice.showTaskDesc(0, ()=>{
+
+                            BetterFoodChoice.showTaskDesc(1, ()=>{
+                                // send data to main handler
+                                props.callback({
+                                    ...values,
+                                    country
+                                });
+                            })
+                            
                         })
                     }}
                     // validate data
@@ -121,9 +125,9 @@ const Survey = (props) => {
                             .max(100,'Older than 100?')
                             .min(18, 'Must be 18 years old')
                             .required('Required'),
-                        education: number().typeError('Required').integer().required('Required'),
-                        income: number().typeError('Required').integer().required('Required'),
-                        genre: number().typeError('Required').integer().required('Required'),
+                        education: string().typeError('Required').required('Required'),
+                        income: string().typeError('Required').required('Required'),
+                        genre: string().typeError('Required').required('Required'),
                         studyUserID:  string().required('Required'),
                       })}
                       //initialValues={{genre:false,age:'',education:false,income:false}}
@@ -144,7 +148,7 @@ const Survey = (props) => {
             
                                     <p>Nochmals vielen Dank!</p>
                                     <p>Klaus Fuchs (Projektleitung)<br></br>Prof. Dr. Verena Tiefenbeck<br></br>Jie Lian<br></br>Leonard Michels<br></br>Mehdi Bouguerra</p>
-                                    <FieldOptions name={'country'} options={['Germany','Switzerland']} setFieldValue={(e,i) => setCountry(['de','ch'][i])} value={['de','ch'].indexOf(country)}/>                                    
+                                    <FieldOptions name={'country'} options={['Germany','Switzerland']} setFieldValue={(e,i) => setCountry(i == 'Germany' ? 'de':'ch')} value={country == 'de' ? 'Germany':'Switzerland'}/>                                    
                                     <a className={'next'} onClick={e => setStep(s => s+1)}>Next</a>
                                 </div>
                             

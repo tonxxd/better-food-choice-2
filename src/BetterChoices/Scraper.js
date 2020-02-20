@@ -17,8 +17,8 @@ class Scraper {
         for(let i=0; i<urls.length; i+= settings.overviewBatchSize){
 
             // break if change page
-            if(this.Scraping != id)
-                return
+            // if(this.Scraping != id)
+            //     return
             
             let promises = urls.slice(i,i+settings.overviewBatchSize).map(u => 
                 new Promise(async res => {

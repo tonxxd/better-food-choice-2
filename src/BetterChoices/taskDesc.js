@@ -1,50 +1,33 @@
-export default `
+export default [()=>`
 
 <h1>Task description Nutri-score study</h1>
-<p><span style="font-weight: bold">Version</span>: 1</p>
-<p><span style="font-weight: bold">Author</span>: LM</p>
-<p><span style="font-weight: bold">Changes</span>: - </p>
+<p>Liebe Teilnehmerin, <br/>lieber Teilnehmer,</p>
 
-<p><span style="font-weight: bold">Einleitung:</span></p>
-<p>Liebe Teilnehmerin, lieber Teilnehmer,</p>
+<p>heute kaufen Sie Lebensmittel in einem Online-Supermarkt ein. </p><p>
 
-<p>für die folgenden Aufgabe sollen Sie verschiedene Lebensmittel in einem Online-Supermarkt einkaufen. Der Supermarkt ist wie ein ganz normaler Onlineshop aufgebaut. Wenn Sie ein Produkt gefunden haben, das sie Ihrem Warenkorb hinzufügen möchten, können Sie dies durch einen Klick auf die Schaltfläche „Auf die Einkaufsliste“ in der Detailansicht des Produktes tun. In die Detailansicht wechseln Sie, indem Sie auf das Bild des Produktes oder seinen Namen klicken.
-Die Detailansicht liefert folgende Informationen zu dem Produkt:
-<li>Nährwerte (100g und eine Portion)</li>
-<li>fünfstufige Farb- und Buchstabenskala, die einen Überblick über die Nährwertqualität eines Produktes liefert (A-E); bezieht Energiegehalt, Zucker, gesättigte Fettsäuren, Natrium, Proteine, Ballaststoffe und Obst-, Gemüse- bzw. Nussanteil mit ein</li>
-<li>Zutaten des Produktes</li>
-<li>Allgemeine Produktinformationen (Kühlung, Verpackungsart, Herkunft etc.)</li> </p>
+Wir bitten Sie, ihren <b>wöchentlichen Lebensmitteleinkauf</b> in dem Online-Supermarkt durchzuführen, also Lebensmittel einzukaufen, die Sie <b>für sich selbst für den Zeitraum von einer Woche einkaufen</b> würden. Dazu steht Ihnen ein <b>Budget von insgesamt CHF 100,- [55€]</b> zur Verfügung. Gehen Sie bitte davon aus, dass Sie einen <b>gewöhnlichen Einkauf durchführen</b>. Außergewöhnliche Ereignisse, die in der kommenden Woche anstehen könnten (z.B. ein geplantes gemeinsames Essen mit Freunden), bitten wir Sie, nicht in ihren Einkauf einzubeziehen.
+</p>`,(group, country)=>`
+
+<p>Wenn Sie ein Produkt kaufen möchten, geht das <b>via Klick auf „Auf die Einkaufsliste“</b> oder <b>durch einen Klick auf das kleine „Plus“ in der Produktübersicht</b>(siehe unten). In die Detailansicht wechseln Sie, indem Sie auf das Bild des Produktes oder seinen Namen klicken. </p>
+<img src="${chrome.runtime.getURL('task-1.png')}"/>
+
+<p>Die Detailansicht liefert folgende Informationen zu dem Produkt:</p>
+<li style="padding-left:20px">Menge des Produktes</li>
+<li style="padding-left:20px">Detaillierte Abbildung</li>
+<li style="padding-left:20px">Preis</li>
+<li style="padding-left:20px">Nährwerte (100g und eine Portion)</li>
+<li style="padding-left:20px">Allgemeine Produktinformationen (Kühlung, Verpackungsart, Herkunft etc.) </li>
+${group == 'A' || group == 'B' ? '<li style="padding-left:20px">[Nutri-Score (fünfstufige Farb- und Buchstabenskala, die einen Überblick über die Nährwertqualität eines Produktes liefert (A-E); bezieht Energiegehalt, Zucker, gesättigte Fettsäuren, Natrium, Proteine, Ballaststoffe und Obst-, Gemüse- bzw. Nussanteil mit ein)] only in T1 & T2</li>':''}
+<li style="padding-left:20px">Zutaten des Produktes</li>
+
+<p>Die Artikel, die sich aktuell in ihrem Warenkorb befinden, können Sie jederzeit durch einen Klick auf das Einkaufswagen-Symbol am oberen linken Rand einsehen. Dort können Sie auch bereits gewählte Produkte wieder entfernen.
+Über das „i“-Symbol können Sie diese Aufgabenbeschreibung jederzeit erneut aufrufen. </p>
+
+<p>Sie haben sehr viel Zeit für die Aufgabe, sodass Sie sich in Ruhe alle Produkte und Kategorien ansehen können. Wenn Sie ein Produkt kaufen möchten, fügen Sie es Ihrem Warenkorb hinzu. Sobald Sie alle gewünschten Produkte hinzugefügt haben, klicken Sie auf das Einkaufswagen-Symbol am oberen linken Rand und wählen unten „Zur Kasse“.</p>
+<img src="${chrome.runtime.getURL("task-2.png")}"/>
 
 <hr>
 
-<p>Für die folgende Aufgabe möchten wir Sie bitten sich vorzustellen, dass Sie für sich und zwei Freunde von Ihnen ein Abendessen planen. Dabei haben Sie sich dazu entschlossen, die notwendigen Lebensmittel in einem Onlineshop einzukaufen. 
-Für ein Budget von insgesamt CHF 100/ EUR 55 möchten Sie für sich und ihre Gäste eine Vorspeise und ein Hauptgericht zubereiten. Außerdem möchten Sie nicht-alkoholische Getränke bereitstellen.
-Gehen Sie bitte davon aus, dass Ihre Küche mit den grundlegenden Gewürzen und Öl ausgestattet ist. Sie müssen demnach nur die Hauptzutaten für die Gerichte einkaufen. </p>
+${country == 'ch' ? '<p><b>Als zusätzliche Vergütung für die Teilnahme an der Studie werden unter allen Teilnehmenden drei Personen ausgelost, die ihren zusammengestellten Warenkorb zugeschickt bekommen.</b> Geben Sie dazu bitte am Ende der Umfrage Ihre E-Mail-Adresse an, damit wir Sie im Gewinnfall kontaktieren können. Die E-Mail-Adresse dient nur zur Benachrichtigung, wird getrennt von Ihren Antworten gespeichert und nach der Studie gelöscht. </p>' : '<p><b>Als zusätzliche Vergütung für die Teilnahme an der Studie werden unter allen Teilnehmenden drei Personen ausgelost, die ihren zusammengestellten Warenkorb zugeschickt bekommen.</b> Sollte ein Produkt nicht verfügbar sein, wird es durch ein Alternativprodukt ersetzt, das dem ursprünglichen mindestens gleichwertig ist. Um Ihren Gewinn erhalten zu können, geben Sie bitte am Ende der Umfrage Ihre E-Mail-Adresse an, damit wir Sie im Falle eines Gewinns kontaktieren können. Die E-Mail-Adresse dient nur zur Benachrichtigung, wird getrennt von Ihren Antworten gespeichert und nach der Studie gelöscht.</p>'}
 
-<p>Die folgende Liste kann Ihnen als grobe Richtlinie für Ihr Menü dienen. Sie müssen sich nicht strikt an die Vorschläge halten und können alle möglichen Lebensmittel auswählen.</p>
-
-<li>Vorspeisenplatte:
-<li style="padding-left:20px">Salat/Suppe mit Gemüse oder Fleisch</li>
-<li style="padding-left:20px">Brot</li>
-<li style="padding-left:20px">Käse/Würste</li>
-</li>
-
-
-<li>Hauptgericht: 
-<li style="padding-left:20px">Fleisch, Fisch oder Gemüse</li>
-<li style="padding-left:20px">Beilagen (e.g. Nudeln, Reis, Kartoffeln oder anderes Gemüse)</li>
-<li style="padding-left:20px">Saucen</li>
-</li>
-
-<li>Getränke:
-
-<li style="padding-left:20px">Wasser</li>
-<li style="padding-left:20px">Soft-drinks</li>
-<li style="padding-left:20px">Säfte</li>
-</li>
-
- 
-Nehmen Sie sich bitte so viel Zeit wie Sie möchten, um die verschiedenen Produkte und Kategorien zu erkunden. Wenn Sie ein Produkt kaufen möchten, fügen Sie es bitte Ihrem Warenkorb hinzu. Sobald Sie alle, für Ihr Menü notwendigen, Produkte hinzugefügt haben, fahren Sie bitte zur Kasse fort. 
-
-
-`
+`]

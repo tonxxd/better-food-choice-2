@@ -7,7 +7,10 @@ import Storage from '../utils/storage';
 import { settings } from '../config';
 import BetterFoodChoice from '../BetterChoices/App';
 
-
+import {
+    unit,
+    multiply
+} from 'mathjs'
 const CartButton = props => {
     return (
         <div id="bfcCartButtonEl" onClick={ e => props.setShowCartList(true)}>
@@ -20,7 +23,12 @@ const CartButton = props => {
 const TaskButton = props => {
     return (
         <div id="bfcCartButtonEl" className="taskPopup" onClick={ e => {
-            BetterFoodChoice.showTaskDesc(()=>{
+            BetterFoodChoice.showTaskDesc(0, ()=>{
+
+                BetterFoodChoice.showTaskDesc(1, ()=>{
+                    
+                })
+                
             })
         }}>
             ?
@@ -54,6 +62,7 @@ const CartList = props => {
                         <p>
                         {p.quantity > 1 ? p.quantity+' x':''}{p.name}
                             <span>{p.currency.toUpperCase()} {p.price}</span>
+                            <span>{p.size ? multiply(p.size,p.quantity||1).toString():''}</span>
                             {((group === 'A') || (group == 'B' && ['C','D','E'].indexOf(p.nutriScore) === -1)) && <img src={chrome.runtime.getURL(`ns${p.nutriScore}.png`)} />}
                         </p>
                         <a href="#" onClick={e => {
@@ -74,8 +83,13 @@ const CartList = props => {
                         alert(`Over budget! (max: ${props.products[0].currency}${settings.maxBudget[props.products[0].currency]})`);
                         return
                     }
-                    props.setShowCartList(false)
-                    setTimeout(props.onFinishStudy, 800)
+                    BetterFoodChoice.showAlert("Finish study","Are you sure that you have finished your shopping task?", ()=>{
+                        
+                    }, 'No', ()=>{
+                        props.setShowCartList(false)
+                        setTimeout(props.onFinishStudy, 800)
+                    }, 'Yes')
+                    
                 }}>Check out</button>
                 </div>
                 <div>Budget: {((props.products[0] || {}).currency || 'CHF').toUpperCase()} {settings.maxBudget[(props.products[0] || {}).currency || 'chf']}</div>
@@ -157,7 +171,9 @@ const CartTemplate = props => {
     useEffect(() => {
         
         (async()=>{
-            setProducts(await Storage.get("bfc:cart") ? JSON.parse(await Storage.get("bfc:cart")) : [])
+            const localStorageCart = await Storage.get("bfc:cart");
+            console.log(localStorageCart ? JSON.parse(localStorageCart).map(p => p.size ? ({...p, size: unit(p.size)}) : p) : [])
+            setProducts(localStorageCart ? JSON.parse(localStorageCart).map(p => p.size ? ({...p, size: unit(p.size)}) : p) : [])
             setInit(true)
             props.cartClass.addProduct = (p) => {
                 props.cartClass.onAddToCart(p)
@@ -165,6 +181,7 @@ const CartTemplate = props => {
 
                 // quantity feature
                 setProducts(ps => {
+                        console.log(p)
                         if(ps.filter(pold => pold.gtin === p.gtin).length){
                             return ps.map(pold => pold.gtin === p.gtin ? {...pold, quantity: (pold.quantity || 1) +1} : pold)
                         }else {
@@ -186,14 +203,14 @@ const CartTemplate = props => {
     useEffect(()=>{
         if(!init) // prevent override empty cart
             return
-        Storage.set("bfc:cart", JSON.stringify(products))
+        Storage.set("bfc:cart", JSON.stringify(products.map(p => p.size ? ({...p, size: p.size.toString()}) :p)))
     },[products])
 
     return [
         <Notification products={products} />,
         <TaskButton />,
         <CartButton count={products.reduce((sum ,p) => sum+(p.quantity || 1), 0)} setShowCartList={setShowCartList}/>,
-        <CartList products={products} onFinishStudy={() => props.cartClass.onFinishStudy(products)} showCartList={showCartList} setShowCartList={setShowCartList} removeProduct={removeProduct}/>
+        <CartList products={products} onFinishStudy={() => props.cartClass.onFinishStudy(products.map(p => p.size ? {...p,size: multiply(p.size, p.quantity||1).toString()} : p))} showCartList={showCartList} setShowCartList={setShowCartList} removeProduct={removeProduct}/>
     ]
 
 }

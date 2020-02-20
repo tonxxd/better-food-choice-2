@@ -31,6 +31,7 @@ class Tracker {
             timeSpent: end - this.currentPage.start,
             pageUrl: this.currentPage.url,
             category: this.currentPage.category,
+            gtin: this.currentPage.gtin,
             title: this.currentPage.title
         })
         this.currentPage = false 

@@ -121,6 +121,7 @@ firebase.initializeApp({
       const tracker = new Tracker(await Storage.get("bfc:userID"))
 
 
+      console.log(data)
       // send infos to backed
       let studyGroup = await tracker.trackEvent('survey', data)
 
@@ -145,6 +146,11 @@ firebase.initializeApp({
   // if not completed survey
   if(! await Storage.get('bfc:introSurvey') && await Storage.get("bfc:studyStatus") == '1'){
     initSurvey()
+  }
+
+  // restart
+  if(await Storage.get("bfc:studyStatus") == '2'){
+    BetterFoodChoice.showRestartButton()
   }
 
 

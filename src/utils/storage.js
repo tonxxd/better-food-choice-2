@@ -4,6 +4,7 @@ class Storage {
 
     static async clear(){
         return new Promise(res => {
+            localStorage.clear()
             chrome.storage.sync.clear(() => {
                 res();  
             });
