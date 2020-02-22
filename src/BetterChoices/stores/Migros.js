@@ -486,6 +486,7 @@ class Migros extends Generic {
             .sidebar-teaser,
             .sidebar-retailer,
             .retailer-tabs,
+            .related-container,
             #gopt-related-products,
             .container-fluid.is-relative.is-overflow-hidden.is-bg-cover-center-right.bg.is-inverted.is-overlapping-product-trigger,
             .mui-teaser-picture-desktop,
