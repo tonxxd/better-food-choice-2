@@ -205,3 +205,37 @@
         }
     }
 }
+
+
+.mui-product-tile .bfcHideProd {
+    display: flex;
+    position:absolute;
+    content: "loading";
+    background: white;
+    width: 100%;
+    height: 100%;
+    top:0;
+    color: black;
+    font-size: 20px;
+    left:0;
+    z-index: 999;
+    align-items:center;
+    justify-content: center;
+}
+// .mui-product-tile.updatedBetterFoodChoice .bfcHideProd {
+//     display: none;
+// }
+
+
+#bfcLoader {
+    position: fixed;
+    z-index: 999999;
+    top:0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

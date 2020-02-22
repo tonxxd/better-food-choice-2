@@ -13,6 +13,7 @@ import taskDesc from "./taskDesc";
 import { RestartIcon } from "../Cart/icons";
 
 
+
 class BetterFoodChoice {
     constructor(tracker) {
 
@@ -37,6 +38,8 @@ class BetterFoodChoice {
         });
 
 
+
+
     }
 
 
@@ -49,6 +52,9 @@ class BetterFoodChoice {
     async init(group = 'A') {
 
         try {
+            // hide elements
+            (document.getElementById("info")||{style:{opacity:0}}).style.opacity=0;
+
             // delete ads
             this.store.clean();
 
@@ -72,6 +78,7 @@ class BetterFoodChoice {
             switch (pageType) {
                 case this.store.pageTypes.SINGLEPRODUCTPAGE: // single product
 
+                    // show loader
 
                     // retrieve GTIN
                     const GTIN = this.store.getGTIN();
@@ -128,6 +135,10 @@ class BetterFoodChoice {
                         })
                     })
 
+                    // show elements
+                    document.getElementById("info").style.opacity=1;
+
+
                     break;
 
 
@@ -137,34 +148,16 @@ class BetterFoodChoice {
                     // instantiate scraper
                     const scraper = new Scraper();
 
-                    // urls already scraped
-                    let urls = [];
-                    let currentUrl = window.location.pathname // detect change page to clear urls array
-
                     // iterate product tiles
                     const iterateProducts = async () => {
 
+                        // hide
+                        this.store.hideProducts()
 
 
                         // get all urls from product list
                         let allUrls = this.store.getUrlsFromOverview();
                         this.store.blockAddToCart()
-
-                        // if (allUrls[0] != urls[0])
-                        //     urls = []
-
-
-                        // // if list not changed return
-                        // if (allUrls.length === urls.length)
-                        //     return
-
-                        // // filter urls to be scraped
-                        // let toScrape = allUrls.filter(u => urls.indexOf(u) < 0);
-
-                        // // update urls important 
-                        // urls = allUrls
-
-                        // console.log(urls.length)
 
                         // scrape urls in small batches to improve performances and prevent abuse
                         scraper.scrapeBatch(allUrls, (urlsSlice, bodies) => {

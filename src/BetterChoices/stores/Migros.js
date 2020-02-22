@@ -86,6 +86,12 @@ class Migros extends Generic {
         }
     }
 
+    hideProducts(){
+        const $el = $('<div />').addClass("bfcHideProd").html("<p>Loading</p>")
+        $('.mui-product-tile:not(.updatedBetterFoodChoice)').append($el);
+        // $('.mui-product-tile:not(.updatedBetterFoodChoice)').css({opacity:0})
+    }
+
     changeLogoLink(){
         $(".logo").closest("a").attr("href",'https://www.migros.ch/de/einkaufen.html')
     }
@@ -266,7 +272,7 @@ class Migros extends Generic {
                 el.find('.mui-product-tile-discount-image-container'),
                 cat
             )
-            el.addClass('updatedBetterFoodChoice')
+            el.find(".bfcHideProd").fadeOut().remove()
       
     }
 
@@ -436,13 +442,13 @@ class Migros extends Generic {
         if(await Storage.get("bfc:country") == 'de')
             price = convertPrice(price,category)
         
-        const regex = /([\d.?]+)\s?(l|ml|g|kg|gr)([\s?.?,?;?])/
+        const regex = /(([\d]+)[xX])?([\d.?]+)\s?(l|ml|g|kg|gr|G|GR|ML|L|KG)([\s?.?,?;?])/
         const sizeMatch = regex.exec($body.find(".sidebar-subtext").text()) || regex.exec($body.find('.sidebar-product-name').first().text())
         return {
             category,
             name: $body.find('.sidebar-product-name').first().text().replace(regex,''),
             price,
-            size: sizeMatch ? unit(sizeMatch[1],sizeMatch[2]) : false,
+            size: sizeMatch ? unit((sizeMatch[2]||1)*sizeMatch[3],sizeMatch[4].toLowerCase()) : false,
             img: $body.find('.product-stage-slider-image').first().attr("data-src")
         }
     }

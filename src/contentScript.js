@@ -35,7 +35,7 @@ firebase.initializeApp({
    */
   const initApp = async (tracker) => {
 
-
+    $("#bfcLoader").remove()
     console.log("INIT Better Food Choices Extension")
 
     // check region
@@ -113,6 +113,9 @@ firebase.initializeApp({
   const initSurvey = async () => {
     const survey = new Survey(await Storage.get("bfc:country"))
     survey.render(async (data) => {
+
+      // show loader
+      $("body").append($("<div id='bfcLoader'>").html("<p>Loading</p>"))
 
       // language change
       Storage.set("bfc:country", data.country)

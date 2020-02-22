@@ -28,7 +28,7 @@
   "content_scripts": [
     {
       "matches": ["*://*.migros.ch/*","*://*.migros.de/*","*://*.migros.it/*"],
-      "run_at": "document_idle",
+      "run_at": "document_end",
       "js": [
         "contentScript.js"
       ]
