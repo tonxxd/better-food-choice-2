@@ -114,6 +114,8 @@ firebase.initializeApp({
     const survey = new Survey(await Storage.get("bfc:country"))
     survey.render(async (data) => {
 
+      console.log(data)
+
       // show loader
       $("body").append($("<div id='bfcLoader'>").html("<p>Loading</p>"))
 

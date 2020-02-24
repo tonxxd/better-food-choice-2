@@ -6,6 +6,8 @@ import posed, { PoseGroup } from 'react-pose';
 import {object, number, string} from 'yup';
 import {useEffect} from 'preact/hooks'
 import BetterFoodChoice from '../BetterChoices/App';
+import Storage from '../utils/storage';
+
 
 const Step = posed.div({
     enter: {opacity:1},
@@ -21,7 +23,7 @@ const FieldOptions = ({name, options, setFieldValue, value}) => {
     return (
         <div className={'options'}>
             {options.map((o, index) => (
-                <label className="radioInput">
+                <label className="radioInput" style={{cursor:'pointer'}}>
                     <input type="radio" className="radioInputStyled" value={o} checked={value === o} onChange={e => setFieldValue(name, o)} />
                     {o}
                 </label>
@@ -101,8 +103,13 @@ const Survey = (props) => {
         <Modal className="modal" pose={showModal ? 'show' :'hide'}>
             <div className="modalInner">
                 <Formik 
-                    onSubmit={(values, { setSubmitting }) => {
+                    onSubmit={async (values, { setSubmitting }) => {
                         setSubmitting(false);
+
+                        console.log(values)
+
+                        // set country and group
+                        await Storage.set('bfc:country',country)
 
                         
                         setShowModal(false)

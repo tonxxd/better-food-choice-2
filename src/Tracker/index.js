@@ -13,13 +13,7 @@ class Tracker {
 
         window.addEventListener('beforeunload', ()=>{
             if (this.currentPage) {
-                const end = new Date();
-                this.trackEvent('track_page', {
-                    timeSpent: end - this.currentPage.start,
-                    pageUrl: this.currentPage.url,
-                    category: this.currentPage.category,
-                    title: this.currentPage.title
-                })
+                this.stop()
             }
         });
 
@@ -32,20 +26,22 @@ class Tracker {
             pageUrl: this.currentPage.url,
             category: this.currentPage.category,
             gtin: this.currentPage.gtin,
-            title: this.currentPage.title
+            title: this.currentPage.title,
+            nutri_score: this.currentPage.nutri_score
         })
         this.currentPage = false 
     }
 
 
 
-    async trackPage(category, url, title, gtin = false) {
+    async trackPage(category, url, title, gtin = false, nutri_score = false) {
         const start = new Date();
         this.currentPage = {
             start,
             category,
             url,
             gtin,
+            nutri_score,
             title
         }
     }

@@ -377,11 +377,24 @@ class BetterFoodChoice {
 
     }
 
-    trackPage() {
-        this.tracker.trackPage(this.store.getPageCategory(), window.location.href, $("title").text(), this.store.getGTIN());
+    async trackPage() {
+
+        const GTIN = this.store.getGTIN();
+        await this.store.loadProductData(GTIN);
+
+        const remoteNutriScore = this.store.products[GTIN].nutri_score_final;
+        const localNutriScore = getScoreLocal(
+            this.store.getProductCategory(),
+            this.store.getFoodValues()
+        );
+        const nutri_score_final = remoteNutriScore || localNutriScore;
+
+        console.log(this.store.getPageCategory(), window.location.href, $("title").text(), GTIN, nutri_score_final)
+
+        this.tracker.trackPage(this.store.getPageCategory(), window.location.href, $("title").text(), GTIN, nutri_score_final);
         window.onhashchange = function () {
             this.tracker.stop()
-            this.tracker.trackPage(this.store.getPageCategory(), window.location.href, $("title").text(), this.store.getGTIN());
+            this.tracker.trackPage(this.store.getPageCategory(), window.location.href, $("title").text(), GTIN,nutri_score_final);
         }
     }
 

@@ -324,6 +324,8 @@ class Migros extends Generic {
         else 
             currentPriceEl.text('CHF '+currentPrice_chf)
 
+        currentPriceEl.addClass("updated")
+
         let usualPrice_chf = usualPriceEl.text().replace('.-', '').replace('-', '').replace('statt', '').trim();
         usualPrice_chf = parseFloat(usualPrice_chf)
 
@@ -436,11 +438,13 @@ class Migros extends Generic {
         const $body = $(customBody || document);
 
         const category = this.getProductCategory(customBody);
-        let price = $body.find('.current-price').first().text().replace("€",'').replace('-','').replace("chf",'')
+        let price = $body.find('.current-price').first().text().replace("€",'').replace('.-','').replace('-','').replace("chf",'').replace('CHF','').replace('EUR','').replace('eur','')
         console.log(price);
         // convert price
-        if(await Storage.get("bfc:country") == 'de')
+        if(await Storage.get("bfc:country") == 'de' && !$('.current-price').hasClass("updated"))
             price = convertPrice(price,category)
+
+        $('.current-price').addClass("updated")
         
         const regex = /(([\d]+)[xX])?([\d.?]+)\s?(l|ml|g|kg|gr|G|GR|ML|L|KG)([\s?.?,?;?])/
         const sizeMatch = regex.exec($body.find(".sidebar-subtext").text()) || regex.exec($body.find('.sidebar-product-name').first().text())
