@@ -27,7 +27,8 @@ ${group == 'A' || group == 'B' ? '<li style="padding-left:20px">[Nutri-Score (f�
 <img src="${chrome.runtime.getURL("task-2.png")}"/>
 
 <hr>
-${country}
+<br/>
+<br/>
 ${country == 'ch' ? '<p><b>Als zusätzliche Vergütung für die Teilnahme an der Studie werden unter allen Teilnehmenden drei Personen ausgelost, die ihren zusammengestellten Warenkorb zugeschickt bekommen.</b> Geben Sie dazu bitte am Ende der Umfrage Ihre E-Mail-Adresse an, damit wir Sie im Gewinnfall kontaktieren können. Die E-Mail-Adresse dient nur zur Benachrichtigung, wird getrennt von Ihren Antworten gespeichert und nach der Studie gelöscht. </p>' : '<p><b>Als zusätzliche Vergütung für die Teilnahme an der Studie werden unter allen Teilnehmenden drei Personen ausgelost, die ihren zusammengestellten Warenkorb zugeschickt bekommen.</b> Sollte ein Produkt nicht verfügbar sein, wird es durch ein Alternativprodukt ersetzt, das dem ursprünglichen mindestens gleichwertig ist. Um Ihren Gewinn erhalten zu können, geben Sie bitte am Ende der Umfrage Ihre E-Mail-Adresse an, damit wir Sie im Falle eines Gewinns kontaktieren können. Die E-Mail-Adresse dient nur zur Benachrichtigung, wird getrennt von Ihren Antworten gespeichert und nach der Studie gelöscht.</p>'}
 
 `]
