@@ -463,6 +463,7 @@ class Migros extends Generic {
             category,
             name: $body.find('.sidebar-product-name').first().text().replace(regex,''),
             price,
+            nutritionTable: this.getFoodValues(customBody),
             size: sizeMatch ? unit((sizeMatch[2]||1)*sizeMatch[3],sizeMatch[4].toLowerCase()) : false,
             img: $body.find('.product-stage-slider-image').first().attr("data-src")
         }

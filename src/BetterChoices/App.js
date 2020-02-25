@@ -444,10 +444,10 @@ class BetterFoodChoice {
         const nutri_score_final = remoteNutriScore || localNutriScore;
 
 
-        this.tracker.trackPage(this.store.getPageCategory(), window.location.href, $("title").text(), GTIN, nutri_score_final);
+        this.tracker.trackPage(this.store.getPageCategory(), window.location.href, $("title").text(), GTIN, nutri_score_final, this.store.getFoodValues());
         window.onhashchange = function () {
             this.tracker.stop()
-            this.tracker.trackPage(this.store.getPageCategory(), window.location.href, $("title").text(), GTIN,nutri_score_final);
+            this.tracker.trackPage(this.store.getPageCategory(), window.location.href, $("title").text(), GTIN,nutri_score_final,this.store.getFoodValues());
         }
     }
 

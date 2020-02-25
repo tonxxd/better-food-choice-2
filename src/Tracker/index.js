@@ -27,6 +27,7 @@ class Tracker {
             category: this.currentPage.category,
             gtin: this.currentPage.gtin,
             title: this.currentPage.title,
+            nutritionTable: this.currentPage.nutritionTable,
             nutri_score: this.currentPage.nutri_score
         })
         this.currentPage = false 
@@ -34,13 +35,14 @@ class Tracker {
 
 
 
-    async trackPage(category, url, title, gtin = false, nutri_score = false) {
+    async trackPage(category, url, title, gtin = false, nutri_score = false, nutritionTable=false) {
         const start = new Date();
         this.currentPage = {
             start,
             category,
             url,
             gtin,
+            nutritionTable,
             nutri_score,
             title
         }
