@@ -42,6 +42,7 @@
     "mathjs": "^6.2.5",
     "preact": "^10.1.1",
     "react-pose": "^4.0.10",
+    "react-toastify": "^5.5.0",
     "shortid": "^2.2.15",
     "yup": "^0.28.0"
   }

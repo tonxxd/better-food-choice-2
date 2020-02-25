@@ -148,8 +148,45 @@ class BetterFoodChoice {
                     // instantiate scraper
                     const scraper = new Scraper();
 
+                    // bodies
+                    let bodiesDB = {}
+
+                    const $this = this;
+                        $("body").on("click", '.mui-js-shoppinglist-item-add', function(e){
+                            e.preventDefault()
+                            e.stopPropagation()
+
+                            const $el = $(this);
+
+                            (async () => {
+
+                                const body = bodiesDB[$this.store.getClosestListItem($el).attr("bfcid")][0]
+    
+                                const productData = await $this.store.getProductData(body);
+    
+                                // block if no price
+                                if (productData.price == '') {
+                                    alert("Product currently unavailable!")
+                                    return
+                                }
+                                //Add to cart
+                                window.BetterFoodChoiceCart.addProduct({
+                                    currency: await Storage.get("bfc:country") === 'de' ? 'eur' : 'chf',
+                                    gtin: $this.store.getGTIN(body),
+                                    ...productData,
+                                    nutriScore: bodiesDB[$this.store.getClosestListItem($el).attr("bfcid")][1]
+                                })
+                            })()
+
+                            
+
+                        })
+
+                    let prevLength = 0;
                     // iterate product tiles
                     const iterateProducts = async () => {
+
+
 
                         // hide
                         this.store.hideProducts()
@@ -157,18 +194,20 @@ class BetterFoodChoice {
 
                         // get all urls from product list
                         let allUrls = this.store.getUrlsFromOverview();
-                        this.store.blockAddToCart()
+                        if(prevLength === allUrls.length)
+                            return
+
+                        prevLength = allUrls.length;
+                        this.store.editUrlsFromOverview();
 
                         // scrape urls in small batches to improve performances and prevent abuse
                         scraper.scrapeBatch(allUrls, (urlsSlice, bodies) => {
 
 
-                            let nutriscores = [];
                             // calculate score
                             bodies.forEach(async (b, index) => {
 
 
-                                console.log(this.store.getGTIN(b))
                                 const remoteData = await this.store.loadProductData(this.store.getGTIN(b))
                                 const remoteNutriScore = remoteData ? remoteData.nutri_score_final : false;
                                 if (settings.showDifferentNutriAlert) alert(`Different ${remoteNutriScore} ${localNutriScore}`)
@@ -176,10 +215,8 @@ class BetterFoodChoice {
                                     this.store.getProductCategory(b),
                                     this.store.getFoodValues(b)
                                 )
-                                console.log(remoteNutriScore, localNutriScore)
                                 const nutri_score_final = remoteNutriScore || localNutriScore
 
-                                nutriscores.push(nutri_score_final)
                                 displayScore(
                                     nutri_score_final,
                                     group,
@@ -187,56 +224,73 @@ class BetterFoodChoice {
                                     'small'
                                 )
 
+                                // store body
+                                bodiesDB[this.store.listItemFromHref(urlsSlice[index]).attr("bfcid")] = [b,nutri_score_final]
+
                                 // convert price
                                 this.store.changePriceList(this.store.listItemFromHref(urlsSlice[index]), this.store.getProductCategory(b))
-                            })
+                            });
 
-                            // listen to add to cart events
-                            urlsSlice.forEach((e, i) => {
+                            // // listen to add to cart events
+                            // urlsSlice.forEach((e, i) => {
 
-                                // delete all events
-                                const addToCartButton = this.store.getAddToCartButton(this.store.listItemFromHref(e))
-                                addToCartButton.addClass("bfcAltered")
-                                addToCartButton.off('click');
+                            //     // delete all events
+                            //     const addToCartButton = this.store.getAddToCartButton(this.store.listItemFromHref(e))
+                            //     addToCartButton.addClass("bfcAltered")
+                            //     addToCartButton.off('click');
 
-                                // listen to click
-                                addToCartButton.on("click", async (e) => {
-                                    e.stopPropagation()
-                                    e.preventDefault();
+                            //     // listen to click
+                            //     addToCartButton.on("click", async (e) => {
+                            //         e.stopPropagation()
+                            //         e.preventDefault();
 
-                                    const productData = await this.store.getProductData(bodies[i]);
+                            //         const productData = await this.store.getProductData(bodies[i]);
 
-                                    // block if no price
-                                    if (productData.price == '') {
-                                        alert("Product currently unavailable!")
-                                        return
-                                    }
-                                    //Add to cart
-                                    window.BetterFoodChoiceCart.addProduct({
-                                        currency: await Storage.get("bfc:country") === 'de' ? 'eur' : 'chf',
-                                        gtin: this.store.getGTIN(bodies[i]),
-                                        ...productData,
-                                        nutriScore: nutriscores[i]
-                                    })
-                                })
+                            //         // block if no price
+                            //         if (productData.price == '') {
+                            //             alert("Product currently unavailable!")
+                            //             return
+                            //         }
+                            //         //Add to cart
+                            //         window.BetterFoodChoiceCart.addProduct({
+                            //             currency: await Storage.get("bfc:country") === 'de' ? 'eur' : 'chf',
+                            //             gtin: this.store.getGTIN(bodies[i]),
+                            //             ...productData,
+                            //             nutriScore: nutriscores[i]
+                            //         })
+                            //     })
 
-                            })
+                            // })
 
                         });
+
+
+                        
 
 
 
 
                     }
 
-                    // configure observer
-                    const observer = new MutationObserver(iterateProducts)
-                    observer.observe(document.body, {
+                    const observer1 = new MutationObserver(()=>{
+                        if($('.mui-js-product-list').length){
+                            // configure observer
+                            const observer = new MutationObserver(iterateProducts)
+                            observer.observe($('.mui-js-product-list')[0], {
+                                subtree: false,
+                                childList: true
+                            });
+
+                            iterateProducts()
+                        }
+                    })
+                    observer1.observe(document.body, {
                         subtree: true,
                         childList: true
                     });
 
-                    // iterateProducts()
+
+                    
 
                     // //page change 
                     // window.onhashchange = () => {
@@ -367,7 +421,7 @@ class BetterFoodChoice {
             padding: '10px 20px',
             borderRadius: 4,
             marginTop: 20
-        }).text(index == 1 ? 'Close' : 'Next').on("click", (e) => {
+        }).text(index == 1 ? 'Schließen' : 'Weiter').on("click", (e) => {
             e.preventDefault();
             $alertWrapper.remove();
             actionHandler()
@@ -389,7 +443,6 @@ class BetterFoodChoice {
         );
         const nutri_score_final = remoteNutriScore || localNutriScore;
 
-        console.log(this.store.getPageCategory(), window.location.href, $("title").text(), GTIN, nutri_score_final)
 
         this.tracker.trackPage(this.store.getPageCategory(), window.location.href, $("title").text(), GTIN, nutri_score_final);
         window.onhashchange = function () {

@@ -19,6 +19,7 @@ import {
 } from '../../utils';
 import pageCategoriesJSON from './data/pageCategories.json'
 import Storage from '../../utils/storage';
+import shortid from 'shortid';
 
 /**
  *
@@ -56,6 +57,10 @@ class Migros extends Generic {
         return $("body").find(".mui-product-tile").filter(function () {
             return $(this).attr("href") == u;
         }).first()
+    }
+
+    getClosestListItem(el){
+        return el.closest('.mui-product-tile')
     }
 
     setDefaultRegion() {
@@ -104,7 +109,7 @@ class Migros extends Generic {
      * @memberof Migros
      */
     listItemTargetFromHref(u) {
-        return this.listItemFromHref(u).find('.mui-js-rating').html("")
+        return this.listItemFromHref(u).find('.mui-product-tile-footer')
     }
 
 
@@ -255,9 +260,18 @@ class Migros extends Generic {
         let urls = [];
         $('.mui-product-tile:not(.updatedBetterFoodChoice)').each(function () {
             urls.push($(this).attr("href"))
-            $(this).addClass('updatedBetterFoodChoice')
         })
         return urls
+    }
+
+    editUrlsFromOverview() {
+        $('.mui-product-tile:not(.updatedBetterFoodChoice)').each(function () {
+            // remove buttons
+            // const $button = $(this).find('.mui-js-shoppinglist-item-add').clone(false, false);
+            $(this).find('.mui-product-tile-footer').html($('<div class="mui-js-shoppinglist-item-add"><button class="bfcAddToCartList">+</button></div>'))
+            $(this).attr("bfcid", shortid.generate())
+            $(this).addClass('updatedBetterFoodChoice')
+        })
     }
 
     /**
@@ -278,14 +292,14 @@ class Migros extends Generic {
 
     getAddToCartButton(element) {
         if (!element)
-            return $(".sidebar-product-information").find(".mui-shoppinglist-add").first()
-        return element.find('.mui-shoppinglist-button-add')
+            return $(".sidebar-product-information").find(".mui-shoppinglist-add")
+        return element.find('.mui-js-shoppinglist-item-add')
     }
 
 
     blockAddToCart(){
-        const $el = $('.mui-product-tile:not(.updatedBetterFoodChoice)').find(".mui-shoppinglist-button-add").clone(true).off();
-        $('.mui-product-tile:not(.updatedBetterFoodChoice)').find(".mui-shoppinglist-button-add").replaceWith($el)
+        const $el = $('.mui-product-tile:not(.updatedBetterFoodChoice)').find(".mui-js-shoppinglist-item-add").clone(true).off();
+        $('.mui-product-tile:not(.updatedBetterFoodChoice)').find(".mui-js-shoppinglist-item-add").replaceWith($el)
     }
 
 
@@ -314,8 +328,7 @@ class Migros extends Generic {
             
 
         let currentPrice_chf = currentPriceEl.text().replace('.-', '').replace('CHF','').replace("€",'').replace("ab",'').replace("Nan",'').replace('-', '').trim();
-        console.log(currentPrice_chf)
-        currentPrice_chf = parseFloat(currentPrice_chf);
+        currentPrice_chf = parseFloat(currentPrice_chf).toFixed(2);
 
         const currentPrice_eur = convertPrice(currentPrice_chf, category)
 
@@ -326,10 +339,9 @@ class Migros extends Generic {
 
         currentPriceEl.addClass("updated")
 
-        let usualPrice_chf = usualPriceEl.text().replace('.-', '').replace('-', '').replace('statt', '').trim();
+        let usualPrice_chf = usualPriceEl.text().replace('statt', '').replace('.-', '').replace('CHF','').replace("€",'').replace("ab",'').replace("Nan",'').replace('-', '').trim();
         usualPrice_chf = parseFloat(usualPrice_chf)
 
-        console.log(currentPrice_chf, currentPrice_eur, category)
 
 
         // discount
@@ -439,7 +451,6 @@ class Migros extends Generic {
 
         const category = this.getProductCategory(customBody);
         let price = $body.find('.current-price').first().text().replace("€",'').replace('.-','').replace('-','').replace("chf",'').replace('CHF','').replace('EUR','').replace('eur','')
-        console.log(price);
         // convert price
         if(await Storage.get("bfc:country") == 'de' && !$('.current-price').hasClass("updated"))
             price = convertPrice(price,category)

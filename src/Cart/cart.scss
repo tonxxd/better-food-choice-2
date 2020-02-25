@@ -1,6 +1,6 @@
 @import '../vars.scss';
 
-
+@import '../../node_modules/react-toastify/dist/ReactToastify.css';
 
 
 #bfcCart {
@@ -238,4 +238,37 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+
+.mui-js-shoppinglist-item-add {
+    float: right;
+    position: relative;
+    top: 4px;
+}
+.bfcAddToCartList {
+    display: inline-flex;
+    width: 30px;
+    height: 30px;
+    background: $primary;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 25px;
+    border: none;
+    transition: all .3s;
+    float: right;
+    outline: none;
+    cursor: pointer;
+    &:hover {
+        background: darken($color: $primary, $amount: 10);
+    }
+    padding-bottom: 5px;
+    text-shadow: 0 2px 3px rgba($color: #000000, $alpha: .2);
+}
+
+.mui-product-tile-footer {
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba($color: #000000, $alpha: .1);
 }

@@ -47,7 +47,7 @@ const Survey = (props) => {
             {
                 t:'Wie alt sind Sie?',
                 name:'age',
-                placeholder: 'E.g. 30'
+                placeholder: 'z.B. 30'
             },{
                 t: 'Welches Geschlecht haben Sie?',
                 options: ['Weiblich','Männlich','Divers'],
@@ -63,7 +63,7 @@ const Survey = (props) => {
                 options: ['0 – 999 Fr.','1000– 1999 Fr.','2000 – 2999 Fr.','3000 – 3999 Fr.','4000 – 4999 Fr.','5000 – 5999 Fr.','6000 – 6999 Fr.','>= 7000 Fr. ','Keine Angabe'],
             },
             {
-                t:'User ID',
+                t:'User ID (siehe Beiblatt)',
                 name:'studyUserID',
                 placeholder: ''
             }
@@ -72,7 +72,7 @@ const Survey = (props) => {
             {
                 t:'Wie alt sind Sie?',
                 name:'age',
-                placeholder: 'E.g. 30'
+                placeholder: 'z.B. 30'
             },{
                 t: 'Welches Geschlecht haben Sie?',
                 options: ['Weiblich','Männlich','Divers'],
@@ -87,7 +87,7 @@ const Survey = (props) => {
                 options: ['0 – 499 €','500 – 999€','1000 – 1999 €','2000 – 2999 €','3000 – 3999 €','4000 – 4999 €','5000 – 5999 €','>= 6000 €','Keine Angabe']
             },
             {
-                t:'User ID',
+                t:'User ID (siehe Beiblatt)',
                 name:'studyUserID',
                 placeholder: ''
             }
@@ -103,29 +103,35 @@ const Survey = (props) => {
         <Modal className="modal" pose={showModal ? 'show' :'hide'}>
             <div className="modalInner">
                 <Formik 
-                    onSubmit={async (values, { setSubmitting }) => {
-                        setSubmitting(false);
+                    onSubmit = {
+                        async (values, {
+                            setSubmitting
+                        }) => {
+                            setSubmitting(false);
 
-                        console.log(values)
 
-                        // set country and group
-                        await Storage.set('bfc:country',country)
+                            // set country and group
+                            await Storage.set('bfc:country', country)
 
-                        
-                        setShowModal(false)
 
-                        BetterFoodChoice.showTaskDesc(0, ()=>{
+                            setShowModal(false)
 
-                            BetterFoodChoice.showTaskDesc(1, ()=>{
-                                // send data to main handler
-                                props.callback({
-                                    ...values,
-                                    country
-                                });
+                            BetterFoodChoice.showTaskDesc(0, () => {
+
+                                BetterFoodChoice.showTaskDesc(1, () => {
+                                    BetterFoodChoice.showTaskDesc(2, () => {
+                                        // send data to main handler
+                                        props.callback({
+                                            ...values,
+                                            country
+                                        });
+                                    })
+
+                                })
+
                             })
-                            
-                        })
-                    }}
+                        }
+                    }
                     // validate data
                     validationSchema={object({
                         age: number()
@@ -145,7 +151,7 @@ const Survey = (props) => {
                         <PoseGroup>
                             {step == 0 && <Step key={0} className="intro">
                                 <div className="right">
-                                    <h1>Welcome to the study</h1>
+                                    <h1>Willkommen zur Studie</h1>
                                     <p>Liebe Teilnehmerin, lieber Teilnehmer,<br></br>vielen Dank, dass Sie an dieser Studie teilnehmen. Unser Ziel ist es zu untersuchen, wie Menschen Lebensmittel online einkaufen. Zu diesem Zweck werden Sie später eine Einkaufsliste mit verschiedenen Produkten erhalten, die Sie in einem Online-Supermarkt bestellen sollen. Die Studie besteht aus insgesamt drei Teilen. Im ersten Teil werden Sie gebeten einen kurzen Fragebogen zu Ihrer Person und Ihrer Lebenssituation auszufüllen. Darauf folgt die Online-Shopping Aufgabe. Im letzten Teil folgt wieder ein Fragebogen zu Ihrer Person. </p> 
                                     <p>Für Ihre Teilnahme an der Studie erhalten Sie eine Vergütung in Höhe von xx€/CHF. Eine zusätzliche Vergütung erhalten Sie basierend auf den Entscheidungen, die Sie im Verlauf der Studie treffen. Hierzu werden zwei zufällige Produkte, die Sie im Verlauf der Studie in Ihren Warenkorb gelegt haben, ausgewählt. Sie erhalten entweder diese Produkte am Ende der Studie als zusätzliche Vergütung oder den monetären Gegenwert der Produkte. </p>
             
@@ -155,13 +161,13 @@ const Survey = (props) => {
             
                                     <p>Nochmals vielen Dank!</p>
                                     <p>Klaus Fuchs (Projektleitung)<br></br>Prof. Dr. Verena Tiefenbeck<br></br>Jie Lian<br></br>Leonard Michels<br></br>Mehdi Bouguerra</p>
-                                    <FieldOptions name={'country'} options={['Germany','Switzerland']} setFieldValue={(e,i) => setCountry(i == 'Germany' ? 'de':'ch')} value={country == 'de' ? 'Germany':'Switzerland'}/>                                    
-                                    <a className={'next'} onClick={e => setStep(s => s+1)}>Next</a>
+                                    <FieldOptions name={'country'} options={['Deutschland','Schweiz']} setFieldValue={(e,i) => setCountry(i == 'Deutschland' ? 'de':'ch')} value={country == 'de' ? 'Deutschland':'Schweiz'}/>                                    
+                                    <a className={'next'} onClick={e => setStep(s => s+1)}>Weiter</a>
                                 </div>
                             
                             </Step>}
                             {step == 1 && <Step  key={1} className={'step'}>
-                                <h1>Intro Survey</h1>
+                                <h1>Einleitung</h1>
                                 {
                                     questions[country].map(q => (
                                         <div className="question">

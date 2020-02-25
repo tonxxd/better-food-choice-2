@@ -10,6 +10,6 @@ export /**
  */
 const convertPrice = (price, category) => {
 
-    return Math.round(price*100*(ratios[category]|| 0.542107325))/100;
+    return (Math.round(price*100*(ratios[category]|| 0.542107325))/100).toFixed(2);
 
 }

@@ -213,4 +213,8 @@ const displayScore = (score, group, parent, size='big') => {
 
 }
 
+const getNutriscore = (store, body = false) => {
+    
+}
+
 window.getScoreLocal = getScoreLocal;

@@ -6,11 +6,10 @@ import {CartIcon, CloseIcon} from './icons';
 import Storage from '../utils/storage';
 import { settings } from '../config';
 import BetterFoodChoice from '../BetterChoices/App';
+import {unit,multiply} from 'mathjs'
+import { ToastContainer, toast } from 'react-toastify';
 
-import {
-    unit,
-    multiply
-} from 'mathjs'
+
 const CartButton = props => {
     return (
         <div id="bfcCartButtonEl" onClick={ e => props.setShowCartList(true)}>
@@ -26,7 +25,9 @@ const TaskButton = props => {
             BetterFoodChoice.showTaskDesc(0, ()=>{
 
                 BetterFoodChoice.showTaskDesc(1, ()=>{
+                    BetterFoodChoice.showTaskDesc(2, ()=>{
                     
+                    })
                 })
                 
             })
@@ -41,12 +42,13 @@ const CartListWrapper = posed.div({
     hide: {left: '-100%'}
 })
 const CartList = props => {
-    // console.log(props.products)
 
     const [group, setGroup] = useState('C')
+    const [country, setCountry] = useState('ch')
 
     useEffect(()=> {(async()=>{
         setGroup(await Storage.get("bfc:studyGroup"))
+        setCountry(await Storage.get("bfc:country"))
     })()}, [])
 
     const total = Math.round(props.products.reduce((sum, a)=> sum+(parseFloat(a.price) *(a.quantity||1)), 0)*100)/100;
@@ -54,7 +56,7 @@ const CartList = props => {
     return (
         <CartListWrapper id="bfcCartList" pose={props.showCartList ? 'show' : 'hide'} initialPose="hide">
             <span className="closeSide" onClick={e => props.setShowCartList(false)} ><CloseIcon color={"rgba(0,0,0,.3)"} /></span>
-            <h1>Cart</h1>
+            <h1>Warenkorb</h1>
             <div className="cartInner">
                 {props.products.map(p => (
                     <div className="product">
@@ -71,16 +73,15 @@ const CartList = props => {
                         }}><CloseIcon  color={"white"}/></a>
                     </div>
                 ))}
-                {props.products.length === 0 && <p>No products yet</p>}
+                {props.products.length === 0 && <p>Noch keine Produkte</p>}
             </div>
             <div className="listFooter">
                 <div className="innerFooter">
-                <p className="tot">Total: <span>{((props.products[0] || {}).currency || 'chf').toUpperCase()} {total}</span></p>
+                <p className="tot">Summe: <span style={{display:'block'}}>{((props.products[0] || {}).currency || 'chf').toUpperCase()} {total.toFixed(2)}</span></p>
                 <button className="button" onClick={e => {
                     // return if over budget
-                    console.log(total, props.products[0].currency, settings.maxBudget[props.products[0].currency])
-                    if(total > settings.maxBudget[props.products[0].currency]){
-                        alert(`Over budget! (max: ${props.products[0].currency}${settings.maxBudget[props.products[0].currency]})`);
+                    if(total > settings.maxBudget[country]){
+                        toast.warn(`Over budget! (max: ${country == 'ch' ? 'CHF' : '€'}${settings.maxBudget[country]})`);
                         return
                     }
                     BetterFoodChoice.showAlert("Finish study","Are you sure that you have finished your shopping task?", ()=>{
@@ -90,60 +91,15 @@ const CartList = props => {
                         setTimeout(props.onFinishStudy, 800)
                     }, 'Yes')
                     
-                }}>Check out</button>
+                }}>Zur Kasse</button>
                 </div>
-                <div>Budget: {((props.products[0] || {}).currency || 'CHF').toUpperCase()} {settings.maxBudget[(props.products[0] || {}).currency || 'chf']}</div>
+                <div>Budget: {country == 'ch' ? 'CHF' : '€'}{settings.maxBudget[country]}</div>
             </div>
         </CartListWrapper>
     )
 }
 
 
-const NotificationEl = posed.div({
-    hide: {opacity: 0, top: '-100%'},
-    show: {opacity:1, top:0}
-})
-const Notification = props => {
-
-    const [message, setMessage] = useState('Product Added!')
-    const [products, setProducts] = useState([])
-    const [showNoti, setShowNoti] = useState('hide')
-   
-    // set default products
-    useEffect(()=>{
-       (async()=>{
-           setProducts(await Storage.get("bfc:cart") ? JSON.parse(await Storage.get("bfc:cart")) : [])
-       })()
-    },[])
-   
-    useEffect(() => {
-       
-        const currentAmount = products.reduce((sum ,p) => sum+(p.quantity || 1), 0);
-        const newAmount = props.products.reduce((sum ,p) => sum+(p.quantity || 1), 0)
-
-        if( currentAmount> newAmount){
-            setMessage("Product Removed!")
-            setShowNoti('show')
-        }
-
-
-        if(currentAmount < newAmount){
-            setMessage("Product Added!")
-            setShowNoti('show')
-        }
-        setProducts(props.products)
-
-        setTimeout(() => {
-            setShowNoti('hide')
-        }, 2000)
-
-    }, [props.products])
-    return (
-        <NotificationEl id="bfcNotification" pose={showNoti} initialPose="hide">
-            {message}
-        </NotificationEl>
-    )
-}
 
 const CartTemplate = props => {
 
@@ -172,16 +128,17 @@ const CartTemplate = props => {
         
         (async()=>{
             const localStorageCart = await Storage.get("bfc:cart");
-            console.log(localStorageCart ? JSON.parse(localStorageCart).map(p => p.size ? ({...p, size: unit(p.size)}) : p) : [])
             setProducts(localStorageCart ? JSON.parse(localStorageCart).map(p => p.size ? ({...p, size: unit(p.size)}) : p) : [])
             setInit(true)
             props.cartClass.addProduct = (p) => {
+
+                // toast 
+                toast.success('Produkt hinzugefügt!')
                 props.cartClass.onAddToCart(p)
 
 
                 // quantity feature
                 setProducts(ps => {
-                        console.log(p)
                         if(ps.filter(pold => pold.gtin === p.gtin).length){
                             return ps.map(pold => pold.gtin === p.gtin ? {...pold, quantity: (pold.quantity || 1) +1} : pold)
                         }else {
@@ -193,6 +150,7 @@ const CartTemplate = props => {
             };
             props.cartClass.removeProduct = (gtin) => {
                 props.cartClass.onRemoveFromCart(gtin);
+                toast.success('Produkt entfernt!')
                 removeProduct(gtin)
             }
         })()
@@ -207,8 +165,8 @@ const CartTemplate = props => {
     },[products])
 
     return [
-        <Notification products={products} />,
         <TaskButton />,
+        <ToastContainer />,
         <CartButton count={products.reduce((sum ,p) => sum+(p.quantity || 1), 0)} setShowCartList={setShowCartList}/>,
         <CartList products={products} onFinishStudy={() => props.cartClass.onFinishStudy(products.map(p => p.size ? {...p,size: multiply(p.size, p.quantity||1).toString()} : p))} showCartList={showCartList} setShowCartList={setShowCartList} removeProduct={removeProduct}/>
     ]

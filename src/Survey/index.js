@@ -17,7 +17,9 @@ class Survey {
             BetterFoodChoice.showTaskDesc(0, ()=>{
 
                 BetterFoodChoice.showTaskDesc(1, ()=>{
+                    BetterFoodChoice.showTaskDesc(2, ()=>{
                     
+                    })
                 })
                 
             })
