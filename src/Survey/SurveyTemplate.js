@@ -162,7 +162,7 @@ const Survey = (props) => {
                                     <p>Wir werden all Ihre Antworten vertraulich und anonym erfassen. Anhand Ihrer Antworten werden keine Rückschlüsse auf Ihre Person möglich sein. </p>
                                      
                                     <p>Falls Sie ihre Daten nach Beendigung der Studie zurückziehen möchten, kontaktieren Sie bitte:<br/>
-                                    ID Labs ETH/HSG,<br/>
+                                    Auto-ID Labs ETH / HSG,<br/>
                                     Weinbergstrasse 56, 8092 Zürich, team@autoidlabs.ch</p>
                                      
                                     <p>Nochmals vielen Dank!</p>
