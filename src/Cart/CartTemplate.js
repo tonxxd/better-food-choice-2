@@ -64,7 +64,7 @@ const CartList = props => {
                         <p>
                         {p.quantity > 1 ? p.quantity+' x':''}{p.name}
                             <span>{p.currency.toUpperCase()} {p.price}</span>
-                            <span>{p.size ? multiply(p.size,p.quantity||1).format({precision:2}):''}</span>
+                            <span>{p.size ? multiply(p.size,p.quantity||1).format({precision:3}):''}</span>
                             {((group === 'A') || (group == 'B' && ['C','D','E'].indexOf(p.nutriScore) === -1)) && <img src={chrome.runtime.getURL(`ns${p.nutriScore}.png`)} />}
                         </p>
                         <a href="#" style={{color:'white'}} onClick={e => {
@@ -161,14 +161,14 @@ const CartTemplate = props => {
     useEffect(()=>{
         if(!init) // prevent override empty cart
             return
-        Storage.set("bfc:cart", JSON.stringify(products.map(p => p.size ? ({...p, size: p.size.toString()}) :p)))
+        Storage.set("bfc:cart", JSON.stringify(products.map(p => p.size ? ({...p, size: p.size.format({precision:3})}) :p)))
     },[products])
 
     return [
         <TaskButton />,
         <ToastContainer />,
         <CartButton count={products.reduce((sum ,p) => sum+(p.quantity || 1), 0)} setShowCartList={setShowCartList}/>,
-        <CartList products={products} onFinishStudy={() => props.cartClass.onFinishStudy(products.map(p => p.size ? {...p,size: multiply(p.size, p.quantity||1).toString()} : p))} showCartList={showCartList} setShowCartList={setShowCartList} removeProduct={removeProduct}/>
+        <CartList products={products} onFinishStudy={() => props.cartClass.onFinishStudy(products.map(p => p.size ? {...p,size: multiply(p.size, p.quantity||1).format({precision:3})} : p))} showCartList={showCartList} setShowCartList={setShowCartList} removeProduct={removeProduct}/>
     ]
 
 }
