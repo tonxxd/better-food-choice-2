@@ -11,6 +11,7 @@ import $ from "jquery";
 import Storage from "../utils/storage";
 import taskDesc from "./taskDesc";
 import { RestartIcon } from "../Cart/icons";
+import { toast } from "react-toastify";
 
 
 
@@ -121,8 +122,8 @@ class BetterFoodChoice {
                         const productData = await this.store.getProductData();
 
                         // block if no price
-                        if (productData.price == '') {
-                            alert("Product currently unavailable!")
+                        if (productData.price == '0.00') {
+                            toast.warn("Produkt derzeit nicht verfügbar!")
                             return
                         }
 
@@ -165,8 +166,9 @@ class BetterFoodChoice {
                                 const productData = await $this.store.getProductData(body);
     
                                 // block if no price
-                                if (productData.price == '') {
-                                    alert("Product currently unavailable!")
+                                console.log(productData)
+                                if (productData.price == '0.00') {
+                                    toast.warn("Produkt derzeit nicht verfügbar!")
                                     return
                                 }
                                 //Add to cart
@@ -207,6 +209,9 @@ class BetterFoodChoice {
                             // calculate score
                             bodies.forEach(async (b, index) => {
 
+                                if(this.store.listItemFromHref(urlsSlice[index]).hasClass("dontTouch"))
+                                    return
+                                this.store.listItemFromHref(urlsSlice[index]).addClass("dontTouch")
 
                                 const remoteData = await this.store.loadProductData(this.store.getGTIN(b))
                                 const remoteNutriScore = remoteData ? remoteData.nutri_score_final : false;
@@ -229,6 +234,7 @@ class BetterFoodChoice {
 
                                 // convert price
                                 this.store.changePriceList(this.store.listItemFromHref(urlsSlice[index]), this.store.getProductCategory(b))
+                                
                             });
 
                             // // listen to add to cart events
@@ -421,7 +427,7 @@ class BetterFoodChoice {
             padding: '10px 20px',
             borderRadius: 4,
             marginTop: 20
-        }).text(index == 1 ? 'Schließen' : 'Weiter').on("click", (e) => {
+        }).text(index == 2 ? 'Schließen' : 'Weiter').on("click", (e) => {
             e.preventDefault();
             $alertWrapper.remove();
             actionHandler()

@@ -152,15 +152,27 @@ const Survey = (props) => {
                             {step == 0 && <Step key={0} className="intro">
                                 <div className="right">
                                     <h1>Willkommen zur Studie</h1>
-                                    <p>Liebe Teilnehmerin, lieber Teilnehmer,<br></br>vielen Dank, dass Sie an dieser Studie teilnehmen. Unser Ziel ist es zu untersuchen, wie Menschen Lebensmittel online einkaufen. Zu diesem Zweck werden Sie später eine Einkaufsliste mit verschiedenen Produkten erhalten, die Sie in einem Online-Supermarkt bestellen sollen. Die Studie besteht aus insgesamt drei Teilen. Im ersten Teil werden Sie gebeten einen kurzen Fragebogen zu Ihrer Person und Ihrer Lebenssituation auszufüllen. Darauf folgt die Online-Shopping Aufgabe. Im letzten Teil folgt wieder ein Fragebogen zu Ihrer Person. </p> 
-                                    <p>Für Ihre Teilnahme an der Studie erhalten Sie eine Vergütung in Höhe von xx€/CHF. Eine zusätzliche Vergütung erhalten Sie basierend auf den Entscheidungen, die Sie im Verlauf der Studie treffen. Hierzu werden zwei zufällige Produkte, die Sie im Verlauf der Studie in Ihren Warenkorb gelegt haben, ausgewählt. Sie erhalten entweder diese Produkte am Ende der Studie als zusätzliche Vergütung oder den monetären Gegenwert der Produkte. </p>
-            
+                                    <p>Liebe Teilnehmerin, lieber Teilnehmer,</p>
+
+                                    <p>vielen Dank, dass Sie an dieser Studie teilnehmen. Unser Ziel ist es zu untersuchen, wie Menschen Lebensmittel online einkaufen. Zu diesem Zweck sollen Sie später Lebensmittel in einem Online-Supermarkt einkaufen. </p>
+                                    <p>Die Studie besteht aus insgesamt drei Teilen. Im ersten Teil werden Sie gebeten einen kurzen Fragebogen zu Ihrer Person und Ihrer Lebenssituation auszufüllen. Darauf folgt die Online-Shopping Aufgabe. Im letzten Teil folgt wieder ein Fragebogen zu Ihrer Person.  </p>
+                                     
+                                    <p>Für Ihre Teilnahme an der Studie erhalten Sie eine Vergütung in Höhe von 10€ / 20CHF. Zusätzlich werden am Ende der Erhebung aus allen Teilnehmenden zufällig drei ausgewählt, die ihren in der Aufgabe zusammengestellten Warenkorb als zusätzliche Vergütung erhalten. Um an der Verlosung teilzunehmen, geben Sie bitte am Ende des finalen Fragebogens ihre ID (siehe Beiblatt) und E-Mail-Adresse an. Diese werden separat von ihren Antworten gespeichert, sodass die Anonymität Ihrer Antworten gewährleistet bleibt.</p>
+                                     
                                     <p>Wir werden all Ihre Antworten vertraulich und anonym erfassen. Anhand Ihrer Antworten werden keine Rückschlüsse auf Ihre Person möglich sein. </p>
-            
-                                    <p>Falls Sie ihre Daten nach Beendigung der Studie zurückziehen möchten, kontaktieren Sie bitte:<br></br>ID Labs ETH/HSG,<br></br>Weinbergstrasse 56, 8092 Zürich, team@autoidlabs.ch</p>
-            
+                                     
+                                    <p>Falls Sie ihre Daten nach Beendigung der Studie zurückziehen möchten, kontaktieren Sie bitte:<br/>
+                                    ID Labs ETH/HSG,<br/>
+                                    Weinbergstrasse 56, 8092 Zürich, team@autoidlabs.ch</p>
+                                     
                                     <p>Nochmals vielen Dank!</p>
-                                    <p>Klaus Fuchs (Projektleitung)<br></br>Prof. Dr. Verena Tiefenbeck<br></br>Jie Lian<br></br>Leonard Michels<br></br>Mehdi Bouguerra</p>
+                                    
+                                    <p>Klaus Fuchs (Projektleitung)<br/>
+                                    Prof. Dr. Verena Tiefenbeck<br/>
+                                    Jie Lian<br/>
+                                    Leonard Michels<br/>
+                                    Enrico Toniato</p>
+
                                     <FieldOptions name={'country'} options={['Deutschland','Schweiz']} setFieldValue={(e,i) => setCountry(i == 'Deutschland' ? 'de':'ch')} value={country == 'de' ? 'Deutschland':'Schweiz'}/>                                    
                                     <a className={'next'} onClick={e => setStep(s => s+1)}>Weiter</a>
                                 </div>

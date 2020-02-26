@@ -199,9 +199,11 @@ const displayScore = (score, group, parent, size='big') => {
     if((group === 'B' && ['C','D','E'].indexOf(score) >= 0) || group === 'C')
         return;
 
+    if(parent.find('.nutriscore').length)
+        return
 
     // else render badge
-    const img = $('<img />')
+    const img = $('<img class="nutriscore" />')
         .attr("src", chrome.runtime.getURL(`ns${score}.png`))
         .css({
             height: size === 'big' ? 90 : 40,

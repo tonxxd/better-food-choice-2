@@ -95,7 +95,7 @@ const Popup = () => {
             {page == 'home' && (
                 <div class="page">
                     <h1 class="title">Lebensmittelkauf im Online-Supermarkt</h1>
-                    <h2 class="subtitle">Study</h2>
+                    {/* <h2 class="subtitle">Study</h2> */}
                     {/* <a href="#" onClick={e => setPage('settings')} class="has-text-dark is-size-6 settings">Settings</a> */}
                     {studyStatus === 0 && <button class="button is-primary" onClick={startStudy}>Start study</button>}
                     {studyStatus === 1 && <p>Sie können mit dem Einkauf beginnen.</p>}

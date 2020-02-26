@@ -242,9 +242,11 @@
 
 
 .mui-js-shoppinglist-item-add {
-    float: right;
     position: relative;
     top: 4px;
+    button, button:hover, button:focus, button:active {
+        background: $primary;
+    }
 }
 .bfcAddToCartList {
     display: inline-flex;

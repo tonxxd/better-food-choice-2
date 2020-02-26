@@ -64,32 +64,32 @@ const CartList = props => {
                         <p>
                         {p.quantity > 1 ? p.quantity+' x':''}{p.name}
                             <span>{p.currency.toUpperCase()} {p.price}</span>
-                            <span>{p.size ? multiply(p.size,p.quantity||1).toString():''}</span>
+                            <span>{p.size ? multiply(p.size,p.quantity||1).format({precision:2}):''}</span>
                             {((group === 'A') || (group == 'B' && ['C','D','E'].indexOf(p.nutriScore) === -1)) && <img src={chrome.runtime.getURL(`ns${p.nutriScore}.png`)} />}
                         </p>
-                        <a href="#" onClick={e => {
+                        <a href="#" style={{color:'white'}} onClick={e => {
                             e.preventDefault()
                             props.removeProduct(p.gtin)
-                        }}><CloseIcon  color={"white"}/></a>
+                        }}>-</a>
                     </div>
                 ))}
                 {props.products.length === 0 && <p>Noch keine Produkte</p>}
             </div>
             <div className="listFooter">
                 <div className="innerFooter">
-                <p className="tot">Summe: <span style={{display:'block'}}>{((props.products[0] || {}).currency || 'chf').toUpperCase()} {total.toFixed(2)}</span></p>
+                <p className="tot">Summe: <span style={{display:'block'}}>{country == 'ch' ? 'CHF' : '€'} {total.toFixed(2)}</span></p>
                 <button className="button" onClick={e => {
                     // return if over budget
                     if(total > settings.maxBudget[country]){
-                        toast.warn(`Over budget! (max: ${country == 'ch' ? 'CHF' : '€'}${settings.maxBudget[country]})`);
+                        toast.warn(`Budget überschritten! (max: ${country == 'ch' ? 'CHF' : '€'}${settings.maxBudget[country]})`);
                         return
                     }
-                    BetterFoodChoice.showAlert("Finish study","Are you sure that you have finished your shopping task?", ()=>{
+                    BetterFoodChoice.showAlert("Einkauf beenden","Sind Sie sicher, dassS ie Ihren Einkauf erledigt haben?", ()=>{
                         
-                    }, 'No', ()=>{
+                    }, 'Nein', ()=>{
                         props.setShowCartList(false)
                         setTimeout(props.onFinishStudy, 800)
-                    }, 'Yes')
+                    }, 'Ja')
                     
                 }}>Zur Kasse</button>
                 </div>
