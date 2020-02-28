@@ -153,7 +153,7 @@ class BetterFoodChoice {
                     let bodiesDB = {}
 
                     const $this = this;
-                        $("body").on("click", '.mui-js-shoppinglist-item-add', function(e){
+                        $("body").on("click", '.mui-js-shoppinglist-item-add-bfc', function(e){
                             e.preventDefault()
                             e.stopPropagation()
 

@@ -38,8 +38,8 @@ const TaskButton = props => {
 }
 
 const CartListWrapper = posed.div({
-    show: {left: 0},
-    hide: {left: '-100%'}
+    show: {right: 0},
+    hide: {right: '-100%'}
 })
 const CartList = props => {
 
@@ -166,7 +166,7 @@ const CartTemplate = props => {
 
     return [
         <TaskButton />,
-        <ToastContainer />,
+        <ToastContainer position={toast.POSITION.TOP_CENTER} />,
         <CartButton count={products.reduce((sum ,p) => sum+(p.quantity || 1), 0)} setShowCartList={setShowCartList}/>,
         <CartList products={products} onFinishStudy={() => props.cartClass.onFinishStudy(products.map(p => p.size ? {...p,size: multiply(p.size, p.quantity||1).format({precision:3})} : p))} showCartList={showCartList} setShowCartList={setShowCartList} removeProduct={removeProduct}/>
     ]

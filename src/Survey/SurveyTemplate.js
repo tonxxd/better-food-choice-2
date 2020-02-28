@@ -1,12 +1,14 @@
 import {h} from 'preact';
 import './survey.scss';
-import { useState } from 'preact/hooks';
+import { useState, useRef } from 'preact/hooks';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import posed, { PoseGroup } from 'react-pose';
 import {object, number, string} from 'yup';
 import {useEffect} from 'preact/hooks'
 import BetterFoodChoice from '../BetterChoices/App';
 import Storage from '../utils/storage';
+import Axios from 'axios';
+import { API } from '../config';
 
 
 const Step = posed.div({
@@ -38,8 +40,14 @@ const Survey = (props) => {
     const [showModal, setShowModal] = useState(false)
     const [country, setCountry] = useState(props.country)
 
+    const container = useRef(false)
+
     useEffect(() => {
-        setShowModal(true)
+        setShowModal(true);
+        (async()=>{
+            let {data:group} = await Axios.get(API.baseEndPoint+'/group');
+            await Storage.set("bfc:studyGroup",group)
+        })()
     }, [])
 
     const questions = {
@@ -101,7 +109,7 @@ const Survey = (props) => {
 
     return (
         <Modal className="modal" pose={showModal ? 'show' :'hide'}>
-            <div className="modalInner">
+            <div className="modalInner" ref={container}>
                 <Formik 
                     onSubmit = {
                         async (values, {
@@ -174,7 +182,10 @@ const Survey = (props) => {
                                     Enrico Toniato</p>
 
                                     <FieldOptions name={'country'} options={['Deutschland','Schweiz']} setFieldValue={(e,i) => setCountry(i == 'Deutschland' ? 'de':'ch')} value={country == 'de' ? 'Deutschland':'Schweiz'}/>                                    
-                                    <a className={'next'} onClick={e => setStep(s => s+1)}>Weiter</a>
+                                    <a className={'next'} onClick={e => {
+                                        container.current.scrollTo(0,0)
+                                        setStep(s => s+1)
+                                    }}>Weiter</a>
                                 </div>
                             
                             </Step>}

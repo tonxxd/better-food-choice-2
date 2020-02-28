@@ -5,6 +5,7 @@ export const API = {
     username: 'eatfit_student_dominic',
     password: 'yJFbbHtCPTFyy8GB',
 
+    baseEndPoint: `https://us-central1-ecommercewidget-265813.cloudfunctions.net/bfc`,
     trackingEndPoint: `https://us-central1-ecommercewidget-265813.cloudfunctions.net/bfc/track`,
     // trackingEndPoint: `http://localhost:5001/better-food-choices/us-central1/bfc/track`,
 

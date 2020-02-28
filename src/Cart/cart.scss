@@ -39,7 +39,7 @@
     #bfcCartList {
         pointer-events:all;
         position: absolute;
-        left: 0;
+        // left: 0;
         box-shadow: 5px 0 20px rgba($color: #000000, $alpha: .2);
         top: 0;
         height: 100vh;
@@ -157,7 +157,7 @@
 #bfcCartButtonEl {
 
     &.taskPopup{
-        left: 100px;
+        right: 100px;
         color: white;
         font-size: 40px;
       }
@@ -169,7 +169,7 @@
         transform: scale(1.1);
     }
     top: 20px;
-    left: 20px;
+    right: 20px;
     background: $primary;
     border-radius: 50%;
     width: 60px;
@@ -241,7 +241,7 @@
 }
 
 
-.mui-js-shoppinglist-item-add {
+.mui-js-shoppinglist-item-add-bfc {
     position: relative;
     top: 4px;
     button, button:hover, button:focus, button:active {

@@ -91,6 +91,9 @@ class Migros extends Generic {
 
     changeLogoLink(){
         $(".logo").closest("a").attr("href",'https://www.migros.ch/de/einkaufen.html')
+        $('#skip-navmain a').attr("href", 'https://www.migros.ch/de/einkaufen.html')
+        $('.mui-breadcrumb li:first a').attr("href", 'https://www.migros.ch/de/einkaufen.html')
+        $('.category-browser')
     }
 
     /**
@@ -260,7 +263,7 @@ class Migros extends Generic {
         $('.mui-product-tile:not(.updatedBetterFoodChoice)').each(function () {
             // remove buttons
             // const $button = $(this).find('.mui-js-shoppinglist-item-add').clone(false, false);
-            $(this).find('.mui-product-tile-footer').html($('<div class="mui-js-shoppinglist-item-add"><button class="bfcAddToCartList">+</button></div>'))
+            $(this).find('.mui-product-tile-footer').html($('<div class="mui-js-shoppinglist-item-add-bfc"><button class="bfcAddToCartList">+</button></div>'))
             $(this).attr("bfcid", shortid.generate())
             $(this).addClass('updatedBetterFoodChoice')
         })
@@ -285,14 +288,9 @@ class Migros extends Generic {
     getAddToCartButton(element) {
         if (!element)
             return $(".sidebar-product-information").find(".mui-shoppinglist-add")
-        return element.find('.mui-js-shoppinglist-item-add')
+        return element.find('.mui-js-shoppinglist-item-add-bfc')
     }
 
-
-    blockAddToCart(){
-        const $el = $('.mui-product-tile:not(.updatedBetterFoodChoice)').find(".mui-js-shoppinglist-item-add").clone(true).off();
-        $('.mui-product-tile:not(.updatedBetterFoodChoice)').find(".mui-js-shoppinglist-item-add").replaceWith($el)
-    }
 
 
     /**
@@ -505,6 +503,13 @@ class Migros extends Generic {
             #gopt-last-seen-products,
             .group-discounts-list,
             .group-discounts-container,
+            .ui-js-headerbar,
+            #layout-02-1655bdda,
+            [data-slug='do-it-garden'],
+            [data-slug='micasa'],
+            [data-slug='melectronics'],
+            .is-main-menu,
+            .sidebar-discount-badge,
             .bg-wooden,
             .js-filter-widget.filters-container.products-filters,
             .mui-share-buttons,
