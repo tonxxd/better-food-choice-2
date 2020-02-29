@@ -6,11 +6,12 @@ import {CartIcon, CloseIcon} from './icons';
 import Storage from '../utils/storage';
 import { settings } from '../config';
 import BetterFoodChoice from '../BetterChoices/App';
-import {unit,multiply} from 'mathjs'
+import {unit,multiply,json} from 'mathjs'
 import { ToastContainer, toast } from 'react-toastify';
 
 
 const CartButton = props => {
+    console.log(props)
     return (
         <div id="bfcCartButtonEl" onClick={ e => props.setShowCartList(true)}>
             <span className="badge">{props.count}</span>
@@ -128,7 +129,9 @@ const CartTemplate = props => {
         
         (async()=>{
             const localStorageCart = await Storage.get("bfc:cart");
-            setProducts(localStorageCart ? JSON.parse(localStorageCart).map(p => p.size ? ({...p, size: unit(p.size)}) : p) : [])
+            console.log(localStorageCart)
+            console.log(localStorageCart ? JSON.parse(localStorageCart, json.reviver) : '')
+            setProducts(localStorageCart ? JSON.parse(localStorageCart, json.reviver).map(p => p.quantity ? {...p, quantity: parseFloat(p.quantity)}:p) : [])
             setInit(true)
             props.cartClass.addProduct = (p) => {
 
@@ -161,13 +164,13 @@ const CartTemplate = props => {
     useEffect(()=>{
         if(!init) // prevent override empty cart
             return
-        Storage.set("bfc:cart", JSON.stringify(products.map(p => p.size ? ({...p, size: p.size.format({precision:3})}) :p)))
+        Storage.set("bfc:cart", JSON.stringify(products))
     },[products])
 
     return [
         <TaskButton />,
         <ToastContainer position={toast.POSITION.TOP_CENTER} />,
-        <CartButton count={products.reduce((sum ,p) => sum+(p.quantity || 1), 0)} setShowCartList={setShowCartList}/>,
+        <CartButton count={products.reduce((sum ,p) => sum+(parseFloat(p.quantity || 1)), 0)} setShowCartList={setShowCartList}/>,
         <CartList products={products} onFinishStudy={() => props.cartClass.onFinishStudy(products.map(p => p.size ? {...p,size: multiply(p.size, p.quantity||1).format({precision:3})} : p))} showCartList={showCartList} setShowCartList={setShowCartList} removeProduct={removeProduct}/>
     ]
 

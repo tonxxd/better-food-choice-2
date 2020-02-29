@@ -5,14 +5,14 @@ class Storage {
     static async clear(){
         return new Promise(res => {
             localStorage.clear()
-            chrome.storage.sync.clear(() => {
+            chrome.storage.local.clear(() => {
                 res();  
             });
         })
     }
     static async get(key){
         return new Promise(res => {
-            chrome.storage.sync.get([key], result => {
+            chrome.storage.local.get([key], result => {
                 res(result[key]);  
             });
         })
@@ -20,7 +20,7 @@ class Storage {
 
     static getAll(){
         return new Promise(res => {
-            chrome.storage.sync.get(null, result => {
+            chrome.storage.local.get(null, result => {
                 res(result);  
             });    
         })
@@ -28,7 +28,7 @@ class Storage {
     static async set(obj, value = false){
 
         return new Promise(res => {
-            chrome.storage.sync.set(typeof obj === 'string' ? {[obj]:value} : obj, () => {
+            chrome.storage.local.set(typeof obj === 'string' ? {[obj]:value} : obj, () => {
                 res()
             })
         })
