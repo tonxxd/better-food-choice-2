@@ -121,8 +121,9 @@ class BetterFoodChoice {
 
                         const productData = await this.store.getProductData();
 
+                        console.log(productData)
                         // block if no price
-                        if (productData.price == '0.00') {
+                        if (productData.price == '0.00' || productData.price =="") {
                             toast.warn("Produkt derzeit nicht verfügbar!")
                             return
                         }
@@ -167,7 +168,7 @@ class BetterFoodChoice {
     
                                 // block if no price
                                 console.log(productData)
-                                if (productData.price == '0.00') {
+                                if (productData.price == '0.00' || productData.price =="") {
                                     toast.warn("Produkt derzeit nicht verfügbar!")
                                     return
                                 }
