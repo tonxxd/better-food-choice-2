@@ -17,7 +17,7 @@ Wir bitten Sie, ihren <b>wöchentlichen Lebensmitteleinkauf</b> in dem Online-Su
 <li style="padding-left:20px">Preis</li>
 <li style="padding-left:20px">Nährwerte (100g und eine Portion)</li>
 <li style="padding-left:20px">Allgemeine Produktinformationen (Kühlung, Verpackungsart, Herkunft etc.) </li>
-${group == 'A' || group == 'B' ? '<li style="padding-left:20px">Nutri-Score (fünfstufige Farb- und Buchstabenskala, die einen Überblick über die Nährwertqualität eines Produktes liefert (A-E); bezieht Energiegehalt, Zucker, gesättigte Fettsäuren, Natrium, Proteine, Ballaststoffe und Obst-, Gemüse- bzw. Nussanteil mit ein)</li>':''}
+${group == 'A' || group == 'B' ? '<li style="padding-left:20px">Nutri-Score (fünfstufige Farb- und Buchstabenskala, die einen Überblick über die Nährwertqualität eines Produktes liefert (A-E); bezieht Energiegehalt, Zucker, gesättigte Fettsäuren, Natrium, Proteine, Ballaststoffe und Obst-, Gemüse- bzw. Nussanteil mit ein)<img style="max-height:800px" src="'+chrome.runtime.getURL('task-AB-ch.png')+'"/></li>':'<img style="max-height:800px" src="'+chrome.runtime.getURL('task-C-ch.png')+'"/>'}
 <li style="padding-left:20px">Zutaten des Produktes</li>
 
 <p>Die Artikel, die sich aktuell in ihrem Warenkorb befinden, können Sie jederzeit durch einen Klick auf das Einkaufswagen-Symbol am oberen linken Rand einsehen. Dort können Sie auch bereits gewählte Produkte wieder entfernen.

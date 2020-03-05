@@ -123,7 +123,7 @@ class BetterFoodChoice {
 
                         console.log(productData)
                         // block if no price
-                        if (productData.price == '0.00' || productData.price =="") {
+                        if (productData.price == '0.00' || productData.price =="" || productData.price == 'NaN' || productData.price == '0' || !productData.price) {
                             toast.warn("Produkt derzeit nicht verfügbar!")
                             return
                         }
@@ -168,7 +168,7 @@ class BetterFoodChoice {
     
                                 // block if no price
                                 console.log(productData)
-                                if (productData.price == '0.00' || productData.price =="") {
+                                if (productData.price == '0.00' || productData.price =="" || productData.price == 'NaN' || productData.price == '0' || !productData.price) {
                                     toast.warn("Produkt derzeit nicht verfügbar!")
                                     return
                                 }
